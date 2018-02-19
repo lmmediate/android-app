@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">EasySales</string>
+    <string name="buttonDownload">click me!</string>
+    <string name="showedText">Fetched text</string>
+</resources>
