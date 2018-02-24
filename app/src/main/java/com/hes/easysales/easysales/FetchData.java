@@ -1,8 +1,11 @@
 package com.hes.easysales.easysales;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.widget.TextView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +18,8 @@ import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by sinopsys on 2/18/18.
@@ -23,54 +28,102 @@ import java.net.URL;
 public class FetchData extends AsyncTask<Void, Void, String> {
 
     private StringBuilder data = new StringBuilder();
-    private StringBuilder dataParsed = new StringBuilder();
-    private StringBuilder singleParsed = new StringBuilder();
+
+    private HttpURLConnection httpURLConnection;
+    private ProgressDialog pdLoading;
 
     // To prevent the leak of Context.
     //
     private WeakReference<Activity> activityRef;
-    FetchData(Activity a){
+
+    // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds.
+    //
+    private static final int CONNECTION_TIMEOUT = 10000;
+    private static final int READ_TIMEOUT = 15000;
+
+    FetchData(Activity a) {
         activityRef = new WeakReference<>(a);
+    }
+
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+
+        String loading = activityRef.get()
+                .getApplicationContext().getString(R.string.loadingTitle);
+
+        pdLoading = new ProgressDialog(activityRef.get());
+        pdLoading.setMessage("\t" + loading);
+        pdLoading.setCancelable(false);
+        pdLoading.show();
     }
 
     @Override
     protected String doInBackground(Void... voids) {
         try {
             URL url = new URL("http://46.17.44.125:8080/api/sales");
-            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-            InputStream inputStream = httpURLConnection.getInputStream();
-            BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setReadTimeout(READ_TIMEOUT);
+            httpURLConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+            httpURLConnection.setRequestMethod("GET");
 
-            String line = "";
-            while (line != null) {
-                line = br.readLine();
-                data.append(line);
+            int responseCode = httpURLConnection.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    data.append(line);
+                }
+            } else {
+                return "Unsuccessful connection.";
             }
-
-            JSONArray jsonArray = new JSONArray(this.data.toString());
-            for (int i = 0; i < jsonArray.length(); ++i) {
-                JSONObject jo = (JSONObject) jsonArray.get(i);
-                singleParsed
-                        .append("Name: ")    .append(jo.get("name")).append("\n")
-                        .append("Category: ").append(jo.get("category")).append("\n")
-                        .append("ImageUrl: ").append(jo.get("imageUrl")).append("\n")
-                        .append("newPrice: ").append(jo.get("newPrice")).append("\n");
-
-                dataParsed.append(singleParsed).append("\n");
-                singleParsed = new StringBuilder();
-            }
-        } catch (IOException | JSONException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            httpURLConnection.disconnect();
         }
-        return dataParsed.toString();
+
+        return data.toString();
     }
 
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 
-        TextView tv = activityRef.get().findViewById(R.id.fetchedData);
-        tv.setText(s);
+        if (pdLoading.isShowing()) {
+            pdLoading.dismiss();
+        }
+
+        List<Item> items = new ArrayList<>();
+
+        try {
+            JSONArray jsonArray = new JSONArray(this.data.toString());
+            for (int i = 0; i < jsonArray.length(); ++i) {
+                JSONObject jo = jsonArray.getJSONObject(i);
+                items.add(new Item(
+                        jo.getString("name"),
+                        jo.getString("category"),
+                        jo.getString("imageUrl"),
+                        jo.getDouble("oldPrice"),
+                        jo.getDouble("newPrice"),
+                        jo.getString("discount"),
+                        jo.getString("dateIn"),
+                        jo.getString("dateOut"),
+                        jo.getString("condition")
+                ));
+            }
+            RecyclerView rv = activityRef.get().findViewById(R.id.itemList);
+            ItemAdapter itemAdapter = new ItemAdapter(activityRef.get(), items);
+            rv.setAdapter(itemAdapter);
+            rv.setLayoutManager(new LinearLayoutManager(activityRef.get()));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Toast.makeText(activityRef.get(), e.toString(), Toast.LENGTH_LONG).show();
+        }
     }
 }
 

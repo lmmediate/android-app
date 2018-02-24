@@ -2,4 +2,10 @@
     <string name="app_name">EasySales</string>
     <string name="buttonDownload">click me!</string>
     <string name="showedText">Fetched text</string>
+    <string name="imageViewDescription">Image of the item.</string>
+    <string name="defItemName">Item name</string>
+    <string name="defPrice">price</string>
+    <string name="loadingTitle">Loading..</string>
+    <string name="category">Category:</string>
+    <string name="currency">RUB</string>
 </resources>
