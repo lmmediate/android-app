@@ -8,4 +8,7 @@
     <string name="loadingTitle">Loading..</string>
     <string name="category">Category:</string>
     <string name="currency">RUB</string>
+    <string name="homeTitle">Home</string>
+    <string name="favoritesTitle">Favorites</string>
+    <string name="shoppingList">Shopping List</string>
 </resources>
