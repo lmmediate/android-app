@@ -20,8 +20,8 @@
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation"
         android:background="?android:attr/windowBackground">
-
     </android.support.design.widget.BottomNavigationView>
+
 </RelativeLayout>
 
 

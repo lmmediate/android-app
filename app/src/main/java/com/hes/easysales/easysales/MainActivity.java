@@ -1,25 +1,47 @@
 package com.hes.easysales.easysales;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
+import com.viven.fragmentstatemanager.FragmentStateManager;
 
 /**
  * Created by sinopsys on 2/18/18.
  */
 
 public class MainActivity extends AppCompatActivity {
+    FragmentStateManager fragmentStateManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FrameLayout content = findViewById(R.id.fragmentContainer);
+        fragmentStateManager = new FragmentStateManager(content, getSupportFragmentManager()) {
+            @Override
+            public Fragment getItem(int position) {
+                switch (position) {
+                    case 0:
+                        return new FavoritesFragment();
+                    case 1:
+                        return new HomeFragment();
+                    case 2:
+                        return new ShopListFragment();
+                    default:
+                        return null;
+                }
+            }
+        };
+
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+        bottomNav.setOnNavigationItemReselectedListener(reselectNavListener);
         bottomNav.setSelectedItemId(R.id.nav_home);
         getSupportFragmentManager()
                 .beginTransaction()
@@ -32,25 +54,30 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            Fragment selectedFragment = null;
             switch (item.getItemId()) {
                 case R.id.nav_favorites:
-                    selectedFragment = new FavoritesFragment();
-                    break;
+                    fragmentStateManager.changeFragment(0);
+                    return true;
                 case R.id.nav_home:
-                    selectedFragment = new HomeFragment();
-                    break;
+                    fragmentStateManager.changeFragment(1);
+                    return true;
                 case R.id.nav_shoplist:
-                    selectedFragment = new ShopListFragment();
-                    break;
+                    fragmentStateManager.changeFragment(2);
+                    return true;
             }
+            return false;
+        }
+    };
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragmentContainer, selectedFragment)
-                    .commit();
-
-            return true;
+    private BottomNavigationView.OnNavigationItemReselectedListener reselectNavListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
+        @Override
+        public void onNavigationItemReselected(@NonNull MenuItem item) {
+            // Scroll to top if reselected.
+            //
+            if (item.getItemId() == R.id.nav_home) {
+                RecyclerView rv = findViewById(R.id.itemList);
+                rv.smoothScrollToPosition(0);
+            }
         }
     };
 }
