@@ -11,4 +11,14 @@
     <string name="homeTitle">Home</string>
     <string name="favoritesTitle">Favorites</string>
     <string name="shoppingList">Shopping List</string>
+    <string name="noInternetToast">You are not connected to the internet, please select a network to work with. Opening Settings..</string>
+    <string name="pleaseLogIn">To use shopping list, please log into account:</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="askRegister">New user? Register!</string>
+    <string name="emptyUsername">Username field is required</string>
+    <string name="emptyPassword">Password field is required</string>
+    <string name="invalidUser">Invalid user</string>
+    <string name="loginRetry">Retry</string>
 </resources>

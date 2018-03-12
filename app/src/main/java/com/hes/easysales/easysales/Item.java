@@ -4,7 +4,7 @@ package com.hes.easysales.easysales;
  * Created by sinopsys on 2/21/18.
  */
 
-class Item {
+public class Item {
     private String name;
     private String category;
     private String imageUrl;
@@ -15,17 +15,18 @@ class Item {
     private String dateOut;
     private String condition;
 
-    Item() {}
+    public Item() {
+    }
 
-    Item(String name,
-         String category,
-         String imageUrl,
-         double oldPrice,
-         double newPrice,
-         String discount,
-         String dateIn,
-         String dateOut,
-         String condition) {
+    public Item(String name,
+                String category,
+                String imageUrl,
+                double oldPrice,
+                double newPrice,
+                String discount,
+                String dateIn,
+                String dateOut,
+                String condition) {
 
         this.name = name;
         this.category = category;

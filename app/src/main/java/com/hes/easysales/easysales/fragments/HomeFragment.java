@@ -1,4 +1,4 @@
-package com.hes.easysales.easysales;
+package com.hes.easysales.easysales.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -8,15 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.hes.easysales.easysales.R;
+
 /**
  * Created by sinopsys on 2/25/18.
  */
 
-public class FavoritesFragment extends Fragment {
+public class HomeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_favorites, container, false);
+        return inflater.inflate(R.layout.fragment_home, container, false);
     }
 }
 

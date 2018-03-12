@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.hes.easysales.easysales.activities.LoginActivity">
+
+    <TextView
+        android:id="@+id/askLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pleaseLogIn"
+        android:textAlignment="center"
+        android:layout_marginBottom="40dp"
+        android:layout_marginTop="20dp"
+        android:textSize="23sp"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/username"
+        android:id="@+id/etUsername"
+        android:maxLines="1"
+        android:inputType="text"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/askLogin"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/password"
+        android:id="@+id/etPassword"
+        android:maxLines="1"
+        android:inputType="text"
+        android:layout_marginBottom="20dp"
+        android:layout_below="@+id/etUsername"
+        tools:ignore="TextFields" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:id="@+id/btnLogin"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/etPassword"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:text="@string/askRegister"
+        android:id="@+id/tvRegister"
+        android:layout_below="@+id/btnLogin"/>
+</RelativeLayout>
+
+
+<!--EOF-->

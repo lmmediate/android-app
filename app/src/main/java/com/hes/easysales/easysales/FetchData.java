@@ -3,14 +3,15 @@ package com.hes.easysales.easysales;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
+
+import com.hes.easysales.easysales.adapters.ItemAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,14 +36,16 @@ public class FetchData extends AsyncTask<Void, Void, String> {
     // To prevent the leak of Context.
     //
     private WeakReference<Activity> activityRef;
+    private WeakReference<SwipeRefreshLayout> swipeRefreshLayoutRef;
 
     // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds.
     //
     private static final int CONNECTION_TIMEOUT = 10000;
     private static final int READ_TIMEOUT = 15000;
 
-    FetchData(Activity a) {
+    public FetchData(Activity a, SwipeRefreshLayout sl) {
         activityRef = new WeakReference<>(a);
+        swipeRefreshLayoutRef = new WeakReference<SwipeRefreshLayout>(sl);
     }
 
     @Override
