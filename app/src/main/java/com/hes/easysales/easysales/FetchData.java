@@ -26,7 +26,7 @@ import java.util.List;
  * Created by sinopsys on 2/18/18.
  */
 
-public class FetchData extends AsyncTask<Void, Void, String> {
+public class FetchData extends AsyncTask<Void, Void, List<Item>> {
 
     private StringBuilder data = new StringBuilder();
 
@@ -62,7 +62,7 @@ public class FetchData extends AsyncTask<Void, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Void... voids) {
+    protected List<Item> doInBackground(Void... voids) {
         try {
             URL url = new URL("http://46.17.44.125:8080/api/sales");
             httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -81,7 +81,7 @@ public class FetchData extends AsyncTask<Void, Void, String> {
                     data.append(line);
                 }
             } else {
-                return "Unsuccessful connection.";
+                return null;
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -89,23 +89,13 @@ public class FetchData extends AsyncTask<Void, Void, String> {
             httpURLConnection.disconnect();
         }
 
-        return data.toString();
-    }
-
-    @Override
-    protected void onPostExecute(String s) {
-        super.onPostExecute(s);
-
-        if (pdLoading.isShowing()) {
-            pdLoading.dismiss();
-        }
-
         List<Item> items = new ArrayList<>();
 
         try {
             JSONArray jsonArray = new JSONArray(this.data.toString());
             for (int i = 0; i < jsonArray.length(); ++i) {
-                JSONObject jo = jsonArray.getJSONObject(i);
+                JSONObject jo = null;
+                jo = jsonArray.getJSONObject(i);
                 items.add(new Item(
                         jo.getString("name"),
                         jo.getString("category"),
@@ -118,15 +108,34 @@ public class FetchData extends AsyncTask<Void, Void, String> {
                         jo.getString("condition")
                 ));
             }
-            RecyclerView rv = activityRef.get().findViewById(R.id.itemList);
-            ItemAdapter itemAdapter = new ItemAdapter(activityRef.get(), items);
-            rv.setAdapter(itemAdapter);
-            rv.setLayoutManager(new LinearLayoutManager(activityRef.get()));
-
         } catch (JSONException e) {
             e.printStackTrace();
-            Toast.makeText(activityRef.get(), e.toString(), Toast.LENGTH_LONG).show();
         }
+
+        return items;
+    }
+
+    @Override
+    protected void onPostExecute(List<Item> items) {
+        super.onPostExecute(items);
+        if (pdLoading.isShowing()) {
+            pdLoading.dismiss();
+        }
+        // Get RecyclerView and its adapter.
+        //
+        RecyclerView rv = activityRef.get().findViewById(R.id.itemList);
+        ItemAdapter itemAdapter = (ItemAdapter) rv.getAdapter();
+        if (itemAdapter == null) {
+            itemAdapter = new ItemAdapter(activityRef.get());
+        }
+        // Add items to the adapter.
+        //
+        itemAdapter.addAll(items);
+        rv.setAdapter(itemAdapter);
+        rv.setLayoutManager(new LinearLayoutManager(activityRef.get()));
+        // Stop animation of refreshing.
+        //
+        swipeRefreshLayoutRef.get().setRefreshing(false);
     }
 }
 
