@@ -35,6 +35,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvRegister;
     private Button btnLogin;
     private Button.OnClickListener btnLoginListener;
+    private SharedPreferences sharedPrefs;
     private Map<String, String> userData;
 
     @Override
@@ -42,6 +43,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        sharedPrefs = getSharedPreferences(Config.SH_PREFS_NAME, Context.MODE_PRIVATE);
+        if (!getUserToken().equals(Config.DEF_NO_TOKEN)) {
+            showMainActivity();
+        }
         etUsername = findViewById(R.id.etUsername);
         etPassword = findViewById(R.id.etPassword);
         tvRegister = findViewById(R.id.tvRegister);
@@ -74,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
                                     .create()
                                     .show();
                         } else {
+                            setUserToken(response);
                             showMainActivity();
                         }
                     }
@@ -109,6 +115,16 @@ public class LoginActivity extends AppCompatActivity {
             noErrors = false;
         }
         return noErrors;
+    }
+
+    private String getUserToken() {
+        return sharedPrefs.getString(Config.KEY_TOKEN, Config.DEF_NO_TOKEN);
+    }
+
+    private void setUserToken(String userToken) {
+        SharedPreferences.Editor e = sharedPrefs.edit();
+        e.putString(Config.KEY_TOKEN, userToken);
+        e.apply();
     }
 
     private void showMainActivity() {

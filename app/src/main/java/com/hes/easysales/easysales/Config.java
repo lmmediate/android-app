@@ -13,6 +13,9 @@ public class Config {
     public static final String TAG_VOLLEY_ERROR = "VOLLEY";
     public static final String REQUESTS_CONTENT_TYPE = "application/json; charset=utf-8";
     public static final String BAD_API_AUTH_RESPONSE = "Wrong username/password.";
+    public static final String SH_PREFS_NAME = "easy_sales_token";
+    public static final String KEY_TOKEN = "user_token";
+    public static final String DEF_NO_TOKEN = "NULL";
 }
 
 
