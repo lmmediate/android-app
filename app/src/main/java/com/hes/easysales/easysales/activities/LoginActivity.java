@@ -1,9 +1,11 @@
 package com.hes.easysales.easysales.activities;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -12,13 +14,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.hes.easysales.easysales.AuthRequest;
+import com.hes.easysales.easysales.Config;
 import com.hes.easysales.easysales.R;
+import com.hes.easysales.easysales.utilities.JSONUtil;
 
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,7 +34,8 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etPassword;
     private TextView tvRegister;
     private Button btnLogin;
-    private String token = "";
+    private Button.OnClickListener btnLoginListener;
+    private Map<String, String> userData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,42 +47,52 @@ public class LoginActivity extends AppCompatActivity {
         tvRegister = findViewById(R.id.tvRegister);
         btnLogin = findViewById(R.id.btnLogin);
 
-
         btnLogin.setOnClickListener(btnLoginListener);
     }
 
-    Button.OnClickListener btnLoginListener = new Button.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (!checkFields()) {
-                return;
+    {
+        btnLoginListener = new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!checkFields()) {
+                    return;
+                }
+                final String username = etUsername.getText().toString();
+                final String password = etPassword.getText().toString();
+                userData = new HashMap<>();
+                userData.put(Config.KEY_USERNAME, username);
+                userData.put(Config.KEY_PASSWORD, password);
+                final JSONObject jsonPayload = JSONUtil.formPayload(userData);
+
+                Response.Listener<String> respListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (TextUtils.isEmpty(response) || response.contains(Config.BAD_API_AUTH_RESPONSE)) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                            builder.setMessage(R.string.invalidUser)
+                                    .setNegativeButton(R.string.loginRetry, null)
+                                    .create()
+                                    .show();
+                        } else {
+                            showMainActivity();
+                        }
+                    }
+                };
+
+                Response.ErrorListener errListener = new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                        Toast.makeText(getApplicationContext(), R.string.vLoginError, Toast.LENGTH_LONG).show();
+                    }
+                };
+
+                AuthRequest authRequest = new AuthRequest(respListener, errListener);
+                StringRequest sr = authRequest.login(jsonPayload);
+                Volley.newRequestQueue(getApplicationContext()).add(sr);
             }
-            String username = etUsername.getText().toString();
-            String password = etPassword.getText().toString();
-//            Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
-//                @Override
-//                public void onResponse(JSONObject response) {
-//                }
-//            };
-//            RequestQueue queue = Volley.newRequestQueue(LoginActivity.this);
-//            // Send request to the server, obtain the token, store it in local storage.
-//            //
-//            AuthRequest requests = new AuthRequest(username, password, listener, queue);
-//            requests.login(username, password);
-//
-//            if (!token.contains("Wrong")) {
-//                Intent i = new Intent(LoginActivity.this, MainActivity.class);
-//                startActivity(i);
-//            }
-//            else {
-//                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
-//                builder.setMessage(R.string.invalidUser)
-//                       .setNegativeButton(R.string.loginRetry, null)
-//                       .create()
-//                       .show();
-//            }
-        }
-    };
+        };
+    }
 
     // If the result is false then there is an error in one of the fields,
     // and an error on that field was shown.
@@ -81,17 +100,20 @@ public class LoginActivity extends AppCompatActivity {
     private boolean checkFields() {
         boolean noErrors = true;
         if (TextUtils.isEmpty(etUsername.getText())) {
-            Toast.makeText(getApplicationContext(), R.string.emptyUsername, Toast.LENGTH_SHORT).show();
             etUsername.setError(getString(R.string.emptyUsername));
             noErrors = false;
         }
 
         if (TextUtils.isEmpty(etPassword.getText())) {
-            Toast.makeText(getApplicationContext(), R.string.emptyPassword, Toast.LENGTH_SHORT).show();
             etPassword.setError(getString(R.string.emptyPassword));
             noErrors = false;
         }
         return noErrors;
+    }
+
+    private void showMainActivity() {
+        Intent i = new Intent(LoginActivity.this, MainActivity.class);
+        startActivity(i);
     }
 }
 

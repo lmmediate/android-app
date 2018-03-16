@@ -1,52 +1,47 @@
 package com.hes.easysales.easysales;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.RequestQueue;
+import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
 
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
 
 /**
  * Created by sinopsys on 3/12/18.
  */
 
-public class AuthRequest extends JsonObjectRequest {
+public class AuthRequest {
+    private StringRequest stringRequest;
+    private Response.Listener<String> respListener;
+    private Response.ErrorListener errListener;
 
-    private static final String LOGIN_REQUEST_URL = "http://46.17.44.125:8080/auth/login";
-    private Map<String, String> params;
-    private RequestQueue queue;
-
-    public AuthRequest(String username, String password, Response.Listener<JSONObject> listener, RequestQueue queue) {
-        super(Method.POST, LOGIN_REQUEST_URL, null, listener, null);
-        this.queue = queue;
-        params = new HashMap<>();
-        params.put("Content-Type", "application/json; charset=utf-8");
-        params.put("username", username);
-        params.put("password", password);
+    public AuthRequest(Response.Listener<String> listener, Response.ErrorListener errListener) {
+        this.respListener = listener;
+        this.errListener = errListener;
     }
 
-    public void login(String username, String password) {
-        // Send request to the server, get token and put it in the local storage.
-        //
-        queue.add(this);
-    }
+    public StringRequest login(final JSONObject jsonPayload) {
+        stringRequest = new StringRequest(Request.Method.POST, Config.URL_LOGIN, respListener, errListener) {
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                try {
+                    return jsonPayload.toString() == null ? null : jsonPayload.toString().getBytes("utf-8");
+                } catch (UnsupportedEncodingException uee) {
+                    VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", jsonPayload.toString(), "utf-8");
+                    return null;
+                }
+            }
 
-    public String register(String username, String email, String age, String password) {
-        return "";
-    }
-
-    @Override
-    public Map<String, String> getParams() {
-        return params;
-    }
-
-    @Override
-    public Map<String, String> getHeaders() throws AuthFailureError {
-        return params;
+            @Override
+            public String getBodyContentType() {
+                return Config.REQUESTS_CONTENT_TYPE;
+            }
+        };
+        return stringRequest;
     }
 }
 
