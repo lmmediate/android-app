@@ -5,6 +5,15 @@
 *.apk
 *.ap_
 
+
+# Mobile Tools for Java (J2ME)
+
+# Package Files #
+*.jar
+*.zip
+*.tar.gz
+*.rar
+
 # Files for the ART/Dalvik VM
 *.dex
 
@@ -168,14 +177,6 @@ fabric.properties
 
 # BlueJ files
 *.ctxt
-
-# Mobile Tools for Java (J2ME)
-
-# Package Files #
-*.jar
-*.zip
-*.tar.gz
-*.rar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 
