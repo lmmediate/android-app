@@ -1,6 +1,6 @@
 language: java
 jdk:
-    - oraclejdk7
+    - openjdk7
 install:
     - ./gradlew clean assemble
 before_script:
