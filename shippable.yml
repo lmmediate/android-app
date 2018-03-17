@@ -1,0 +1,13 @@
+language: java
+jdk:
+    - oraclejdk7
+install:
+    - ./gradlew clean assemble
+before_script:
+    - mkdir -p shippable/testresults
+script:
+    - ./gradlew check
+notifications:
+    email:
+        recipients:
+            - kupriyanovkirill@gmail.com
