@@ -12,6 +12,7 @@ import com.hes.easysales.easysales.adapters.ItemAdapter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -64,7 +65,7 @@ public class FetchData extends AsyncTask<Void, Void, List<Item>> {
     @Override
     protected List<Item> doInBackground(Void... voids) {
         try {
-            URL url = new URL("http://46.17.44.125:8080/api/sales");
+            URL url = new URL(Config.URL_SALES_SHOP_1);
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setReadTimeout(READ_TIMEOUT);
             httpURLConnection.setConnectTimeout(CONNECTION_TIMEOUT);
