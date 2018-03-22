@@ -1,5 +1,8 @@
 package com.hes.easysales.easysales;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by sinopsys on 2/21/18.
  */
@@ -15,7 +18,23 @@ public class Item {
     private String dateOut;
     private String condition;
 
-    public Item() {
+    // Factory method to construct an Item from JSONObject.
+    //
+    public static Item fromJSONObject(JSONObject jo) throws JSONException {
+        return new Item(
+                jo.getString("name"),
+                jo.getString("category"),
+                jo.getString("imageUrl"),
+                jo.getDouble("oldPrice"),
+                jo.getDouble("newPrice"),
+                jo.getString("discount"),
+                jo.getString("dateIn"),
+                jo.getString("dateOut"),
+                jo.getString("condition")
+        );
+    }
+
+    private Item() {
     }
 
     public Item(String name,

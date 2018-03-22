@@ -97,17 +97,7 @@ public class FetchData extends AsyncTask<Void, Void, List<Item>> {
             for (int i = 0; i < jsonArray.length(); ++i) {
                 JSONObject jo = null;
                 jo = jsonArray.getJSONObject(i);
-                items.add(new Item(
-                        jo.getString("name"),
-                        jo.getString("category"),
-                        jo.getString("imageUrl"),
-                        jo.getDouble("oldPrice"),
-                        jo.getDouble("newPrice"),
-                        jo.getString("discount"),
-                        jo.getString("dateIn"),
-                        jo.getString("dateOut"),
-                        jo.getString("condition")
-                ));
+                items.add(Item.fromJSONObject(jo));
             }
         } catch (JSONException e) {
             e.printStackTrace();
