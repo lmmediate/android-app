@@ -22,4 +22,9 @@
     <string name="invalidUser">Invalid user</string>
     <string name="loginRetry">Retry</string>
     <string name="vLoginError">Unable to log in. Please check your user credentials and internet connection.</string>
+    <string name="action_settings">Settings</string>
+    <string name="user_profile">Your profile</string>
+    <string name="shop1">Dixy</string>
+    <string name="shop2">Perekrestok</string>
+    <string name="shop3">Auchan</string>
 </resources>

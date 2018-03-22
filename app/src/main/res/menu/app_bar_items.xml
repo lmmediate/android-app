@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.hes.easysales.easysales.activities.MainActivity">
+
+    <item
+        android:id="@+id/shops_spinner"
+        android:background="#ff00"
+        android:title="ActionBar Spinner"
+        app:actionViewClass="android.widget.Spinner"
+        app:showAsAction="ifRoom" />
+
+    <!-- "Mark Favorite", should appear as action button if possible -->
+    <item
+        android:id="@+id/action_profile"
+        android:icon="@drawable/ic_user_profile_24dp"
+        android:title="@string/user_profile"
+        app:showAsAction="ifRoom" />
+
+    <!-- Settings, should always be in the overflow -->
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
+
+</menu>
+
+
+    <!--EOF-->
