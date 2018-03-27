@@ -18,6 +18,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.hes.easysales.easysales.APIRequests;
 import com.hes.easysales.easysales.AuthRequest;
 import com.hes.easysales.easysales.Config;
 import com.hes.easysales.easysales.R;
@@ -25,6 +26,7 @@ import com.hes.easysales.easysales.utilities.JSONUtil;
 
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -93,9 +95,9 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 };
 
-                AuthRequest authRequest = new AuthRequest(respListener, errListener);
-                StringRequest sr = authRequest.login(jsonPayload);
-                Volley.newRequestQueue(getApplicationContext()).add(sr);
+                APIRequests.RequestHandler rh = APIRequests.formPOSTRequest(true, jsonPayload,
+                        Config.URL_LOGIN, respListener, errListener, new WeakReference<>(getApplicationContext()));
+                rh.launch();
             }
         };
     }
