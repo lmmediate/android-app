@@ -16,10 +16,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.hes.easysales.easysales.APIRequests;
-import com.hes.easysales.easysales.AuthRequest;
 import com.hes.easysales.easysales.Config;
 import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.utilities.JSONUtil;
