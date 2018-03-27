@@ -18,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.hes.easysales.easysales.FetchData;
+import com.hes.easysales.easysales.adapters.ItemAdapter;
 import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListFragment;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     FragmentStateManager fragmentStateManager;
     SwipeRefreshLayout swipeRefreshLayout;
+    public RecyclerView mRecyclerView;
+    public ItemAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +90,7 @@ public class MainActivity extends AppCompatActivity {
             // Scroll to top if reselected.
             //
             if (item.getItemId() == R.id.nav_home) {
-                RecyclerView rv = findViewById(R.id.itemList);
-                rv.scrollToPosition(0);
+                mRecyclerView.scrollToPosition(0);
             }
         }
     };
@@ -156,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
 }
 
 

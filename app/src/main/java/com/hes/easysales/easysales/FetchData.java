@@ -7,6 +7,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.hes.easysales.easysales.activities.MainActivity;
 import com.hes.easysales.easysales.adapters.ItemAdapter;
 
 import org.json.JSONArray;
@@ -112,18 +113,7 @@ public class FetchData extends AsyncTask<Void, Void, List<Item>> {
         if (pdLoading.isShowing()) {
             pdLoading.dismiss();
         }
-        // Get RecyclerView and its adapter.
-        //
-        RecyclerView rv = activityRef.get().findViewById(R.id.itemList);
-        ItemAdapter itemAdapter = (ItemAdapter) rv.getAdapter();
-        if (itemAdapter == null) {
-            itemAdapter = new ItemAdapter(activityRef.get());
-        }
-        // Add items to the adapter.
-        //
-        itemAdapter.addAll(items);
-        rv.setAdapter(itemAdapter);
-        rv.setLayoutManager(new LinearLayoutManager(activityRef.get()));
+        ((MainActivity) activityRef.get()).adapter.addAll(items);
         // Stop animation of refreshing.
         //
         swipeRefreshLayoutRef.get().setRefreshing(false);

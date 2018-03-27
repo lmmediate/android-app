@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.hes.easysales.easysales.Item;
@@ -91,12 +92,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return data.size();
     }
 
-    class MyHolder extends RecyclerView.ViewHolder {
+    class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView tvName;
         ImageView ivItem;
         TextView tvPrice;
         TextView tvCategory;
+        int itemId;
 
         MyHolder(View itemView) {
             super(itemView);
@@ -106,6 +108,18 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             tvCategory = itemView.findViewById(R.id.tvCategory);
         }
 
+        public void setItem(int item) {
+            this.itemId = item;
+        }
+
+        @Override
+        public void onClick(View v) {
+            if (v instanceof ImageView) {
+                Toast.makeText(v.getContext(), "Image view clicked: " + this.itemId, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(v.getContext(), this.itemId + " ", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
 
