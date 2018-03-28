@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
-import com.hes.easysales.easysales.adapters.ShopListItemAdapter;
+import com.hes.easysales.easysales.adapters.ItemAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,17 +22,18 @@ import java.util.List;
  */
 
 public class ShopListFragment extends Fragment {
-    RecyclerView shopList;
+
     RecyclerView.LayoutManager layoutManager;
-    List<Item> items;
+    RecyclerView rvShopList;
+    List<Item> shopListItems;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_shoplist, container, false);
-        shopList = v.findViewById(R.id.rvShopList);
-        layoutManager = new LinearLayoutManager(getContext());
-        shopList.setLayoutManager(layoutManager);
+        rvShopList = v.findViewById(R.id.rvShopList);
+        layoutManager = new LinearLayoutManager(getActivity());
+        rvShopList.setLayoutManager(layoutManager);
 
         setData();
         return v;
@@ -52,17 +53,20 @@ public class ShopListFragment extends Fragment {
                     "cond " + String.valueOf(i));
 
             item.setExpandable(true);
-            items.add(item);
+            shopListItems.add(item);
         }
 
-        ShopListItemAdapter adapter = new ShopListItemAdapter(items);
-        shopList.setAdapter(adapter);
+        ItemAdapter adapter = (ItemAdapter) rvShopList.getAdapter();
+        if (adapter == null) {
+            adapter = new ItemAdapter(shopListItems, getActivity());
+            rvShopList.setAdapter(adapter);
+        }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.items = new ArrayList<>();
+        this.shopListItems = new ArrayList<>();
     }
 }
 

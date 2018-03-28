@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
+import android.widget.Adapter;
 
 import com.hes.easysales.easysales.activities.MainActivity;
+import com.hes.easysales.easysales.adapters.ItemAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -110,7 +113,11 @@ public class FetchData extends AsyncTask<Void, Void, List<Item>> {
         if (pdLoading.isShowing()) {
             pdLoading.dismiss();
         }
-        ((MainActivity) activityRef.get()).adapter.addAll(items);
+        RecyclerView rv = (activityRef.get()).findViewById(R.id.itemList);
+        ItemAdapter adapter = (ItemAdapter) rv.getAdapter();
+
+        adapter.addAll(items);
+
         // Stop animation of refreshing.
         //
         swipeRefreshLayoutRef.get().setRefreshing(false);

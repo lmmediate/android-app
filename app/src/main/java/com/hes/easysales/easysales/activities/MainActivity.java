@@ -18,11 +18,10 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.hes.easysales.easysales.FetchData;
-import com.hes.easysales.easysales.adapters.MyAdapter;
+import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListFragment;
-import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.utilities.InternetUtil;
 import com.viven.fragmentstatemanager.FragmentStateManager;
 
@@ -33,8 +32,6 @@ import com.viven.fragmentstatemanager.FragmentStateManager;
 public class MainActivity extends AppCompatActivity {
     FragmentStateManager fragmentStateManager;
     SwipeRefreshLayout swipeRefreshLayout;
-    public RecyclerView mRecyclerView;
-    public MyAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             // Scroll to top if reselected.
             //
             if (item.getItemId() == R.id.nav_home) {
-                mRecyclerView.scrollToPosition(0);
+                ((RecyclerView) findViewById(R.id.itemList)).scrollToPosition(0);
             }
         }
     };
@@ -105,20 +102,27 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.nav_favorites:
-                    fragmentStateManager.changeFragment(0);
-                    return true;
-                case R.id.nav_home:
-                    fragmentStateManager.changeFragment(1);
-                    return true;
-                case R.id.nav_shoplist:
-                    fragmentStateManager.changeFragment(2);
-                    return true;
+            int position = getNavPositionFromMenuItem(item);
+            if (position != -1) {
+                fragmentStateManager.changeFragment(getNavPositionFromMenuItem(item));
+                return true;
             }
+
             return false;
         }
     };
+
+    private int getNavPositionFromMenuItem(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_favorites:
+                return 0;
+            case R.id.nav_home:
+                return 1;
+            case R.id.nav_shoplist:
+                return 2;
+        }
+        return -1;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

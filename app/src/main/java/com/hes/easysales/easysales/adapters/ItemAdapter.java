@@ -9,6 +9,7 @@ import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,30 +27,32 @@ import java.util.List;
  * Created by sinopsys on 3/28/18.
  */
 
-class ShopListItemViewHolderWithoutChild extends RecyclerView.ViewHolder {
-    public ImageView ivItem;
-    public TextView tvName;
-    public TextView tvPrice;
-    public TextView tvCategory;
+class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder {
+    ImageView ivItem;
+    TextView tvName;
+    TextView tvPrice;
+    TextView tvCategory;
+    private Button btnAdd;
 
 
-    public ShopListItemViewHolderWithoutChild(View itemView) {
+    ItemViewHolderWithoutChild(View itemView) {
         super(itemView);
 
         this.ivItem = itemView.findViewById(R.id.ivItem);
         this.tvCategory = itemView.findViewById(R.id.tvCategory);
         this.tvPrice = itemView.findViewById(R.id.tvPrice);
         this.tvName = itemView.findViewById(R.id.tvName);
+        this.btnAdd = itemView.findViewById(R.id.btnAdd);
     }
 }
 
 
-class ShopListItemViewHolderWithChild extends RecyclerView.ViewHolder {
-    public TextView tvCustomName, tvChildText;
-    public RelativeLayout btnFold;
-    public ExpandableLinearLayout ell;
+class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
+    TextView tvCustomName, tvChildText;
+    RelativeLayout btnFold;
+    ExpandableLinearLayout ell;
 
-    public ShopListItemViewHolderWithChild(View itemView) {
+    ItemViewHolderWithChild(View itemView) {
         super(itemView);
 
         this.tvChildText = itemView.findViewById(R.id.tvChildText);
@@ -59,15 +62,16 @@ class ShopListItemViewHolderWithChild extends RecyclerView.ViewHolder {
     }
 }
 
-public class ShopListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    List<Item> items;
-    Context context;
-    SparseBooleanArray expandState;
+    private List<Item> items;
+    private Context context;
+    private SparseBooleanArray expandState;
 
-    public ShopListItemAdapter(List<Item> items) {
+    public ItemAdapter(List<Item> items, Context c) {
         expandState = new SparseBooleanArray();
         this.items = items;
+        this.context = c;
         for (int i = 0; i < items.size(); ++i) {
             expandState.append(i, false);
         }
@@ -82,17 +86,15 @@ public class ShopListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        this.context = parent.getContext();
         // Without children.
         //
         if (viewType == 0) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
             View v = inflater.inflate(R.layout.item_container, parent, false);
-            return new ShopListItemViewHolderWithoutChild(v);
+            return new ItemViewHolderWithoutChild(v);
         }
 
         // With children.
@@ -100,7 +102,7 @@ public class ShopListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         else {
             LayoutInflater inflater = LayoutInflater.from(this.context);
             View v = inflater.inflate(R.layout.item_container_with_child, parent, false);
-            return new ShopListItemViewHolderWithChild(v);
+            return new ItemViewHolderWithChild(v);
         }
     }
 
@@ -108,9 +110,9 @@ public class ShopListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         switch (holder.getItemViewType()) {
             case 0: {
-                ShopListItemViewHolderWithoutChild viewHolder = (ShopListItemViewHolderWithoutChild) holder;
+                ItemViewHolderWithoutChild viewHolder = (ItemViewHolderWithoutChild) holder;
                 Item item = items.get(position);
-                viewHolder.setIsRecyclable(false);
+//                viewHolder.setIsRecyclable(true);
                 viewHolder.tvName.setText(item.getName());
                 viewHolder.tvPrice.setText(String.valueOf(item.getNewPrice()));
                 viewHolder.tvPrice.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
@@ -121,9 +123,9 @@ public class ShopListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             case 1: {
                 // TODO: Horizontal RV do not forget..
                 //
-                final ShopListItemViewHolderWithChild viewHolder = (ShopListItemViewHolderWithChild) holder;
+                final ItemViewHolderWithChild viewHolder = (ItemViewHolderWithChild) holder;
                 Item item = items.get(position);
-                viewHolder.setIsRecyclable(false);
+//                viewHolder.setIsRecyclable(false);
                 viewHolder.tvCustomName.setText(item.getName());
                 viewHolder.tvChildText.setText("asdfasdfasdf");
                 viewHolder.ell.setInRecyclerView(true);
@@ -165,6 +167,33 @@ public class ShopListItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public int getItemCount() {
         return items.size();
+    }
+
+    public void add(Item newItem) {
+        items.add(newItem);
+        notifyItemRangeInserted(items.size() - 1, 1);
+    }
+
+    public void add(Item item, int position) {
+        items.add(position, item);
+        notifyItemInserted(position);
+    }
+
+    public Item getItemAtPosition(int position) {
+        return items.get(position);
+    }
+
+    public void addAll(List<Item> newItems) {
+        int oldSz = items.size();
+        items.clear();
+        notifyItemRangeRemoved(0, oldSz);
+        items.addAll(newItems);
+        notifyItemRangeInserted(0, items.size());
+    }
+
+    public void removeAt(int adapterPosition) {
+        items.remove(adapterPosition);
+        notifyItemRemoved(adapterPosition);
     }
 }
 
