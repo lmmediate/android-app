@@ -17,6 +17,8 @@ public class Item {
     private String dateIn;
     private String dateOut;
     private String condition;
+    private int shopId;
+    private boolean expandable = false;
 
     // Factory method to construct an Item from JSONObject.
     //
@@ -27,6 +29,7 @@ public class Item {
                 jo.getString("imageUrl"),
                 jo.getDouble("oldPrice"),
                 jo.getDouble("newPrice"),
+                jo.getInt("shopId"),
                 jo.getString("discount"),
                 jo.getString("dateIn"),
                 jo.getString("dateOut"),
@@ -42,6 +45,7 @@ public class Item {
                 String imageUrl,
                 double oldPrice,
                 double newPrice,
+                int shopId,
                 String discount,
                 String dateIn,
                 String dateOut,
@@ -94,6 +98,18 @@ public class Item {
         return condition;
     }
 
+    public boolean isExpandable() {
+        return expandable;
+    }
+
+    public int getShopId() {
+        return shopId;
+    }
+
+    public void setExpandable(boolean expandable) {
+        this.expandable = expandable;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -128,6 +144,10 @@ public class Item {
 
     public void setCondition(String condition) {
         this.condition = condition;
+    }
+
+    public void setShopId(int shopId) {
+        this.shopId = shopId;
     }
 }
 
