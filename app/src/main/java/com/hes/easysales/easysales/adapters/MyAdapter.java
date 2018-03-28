@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,7 +31,8 @@ class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     ImageView ivItem;
     TextView tvPrice;
     TextView tvCategory;
-    int itemId;
+    Button btnAdd;
+    private int itemId;
 
     MyHolder(View itemView) {
         super(itemView);
@@ -38,6 +40,7 @@ class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ivItem = itemView.findViewById(R.id.ivItem);
         tvPrice = itemView.findViewById(R.id.tvPrice);
         tvCategory = itemView.findViewById(R.id.tvCategory);
+        btnAdd = itemView.findViewById(R.id.btnAdd);
     }
 
     public void setItem(int item) {
@@ -54,13 +57,13 @@ class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     }
 }
 
-public class ItemAdapter extends RecyclerView.Adapter<MyHolder> {
+public class MyAdapter extends RecyclerView.Adapter<MyHolder> {
 
     private Context context;
     private List<Item> data;
     private LayoutInflater inflater;
 
-    public ItemAdapter(Context context) {
+    public MyAdapter(Context context) {
         this.context = context;
         data = new ArrayList<>();
         inflater = LayoutInflater.from(context);

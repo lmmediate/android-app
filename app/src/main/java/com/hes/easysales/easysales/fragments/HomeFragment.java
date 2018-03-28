@@ -7,14 +7,12 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.activities.MainActivity;
-import com.hes.easysales.easysales.adapters.ItemAdapter;
+import com.hes.easysales.easysales.adapters.MyAdapter;
 
 /**
  * Created by sinopsys on 2/25/18.
@@ -35,16 +33,16 @@ public class HomeFragment extends Fragment {
         // Get RecyclerView and its adapter.
         //
         RecyclerView rv = ((MainActivity) getActivity()).findViewById(R.id.itemList);
-        ItemAdapter itemAdapter = (ItemAdapter) rv.getAdapter();
-        if (itemAdapter == null) {
-            itemAdapter = new ItemAdapter(getActivity());
+        MyAdapter myAdapter = (MyAdapter) rv.getAdapter();
+        if (myAdapter == null) {
+            myAdapter = new MyAdapter(getActivity());
         }
-        ((MainActivity) getActivity()).adapter = itemAdapter;
+        ((MainActivity) getActivity()).adapter = myAdapter;
         ((MainActivity) getActivity()).mRecyclerView = rv;
 
         // Add items to the adapter.
         //
-        rv.setAdapter(itemAdapter);
+        rv.setAdapter(myAdapter);
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 }

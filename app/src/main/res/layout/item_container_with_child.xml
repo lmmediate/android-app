@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:id="@+id/btnFold"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/ic_arrow_up_black_24dp" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tvCustomItemName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@id/btnFold"
+        android:padding="15dp"
+        android:text="This is item with child."
+        android:textColor="@color/colorPrimaryText"
+        android:textSize="20sp" />
+
+    <com.github.aakira.expandablelayout.ExpandableLinearLayout
+        android:id="@+id/expandableLayout"
+        app:ael_duration="300"
+        app:ael_expanded="true"
+        app:ael_interpolator="linear"
+        android:layout_below="@id/btnFold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvChildText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:padding="15dp"
+            android:text="This is child."
+            android:layout_toStartOf="@id/btnFold"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="16sp" />
+        <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="horizontal" />-->
+
+    </com.github.aakira.expandablelayout.ExpandableLinearLayout>
+
+</RelativeLayout>
+
+
+<!--EOF-->

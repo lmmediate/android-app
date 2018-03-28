@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import com.hes.easysales.easysales.activities.MainActivity;
-import com.hes.easysales.easysales.adapters.ItemAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;

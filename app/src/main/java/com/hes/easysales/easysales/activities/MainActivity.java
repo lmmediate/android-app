@@ -18,15 +18,13 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.hes.easysales.easysales.FetchData;
-import com.hes.easysales.easysales.adapters.ItemAdapter;
+import com.hes.easysales.easysales.adapters.MyAdapter;
 import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListFragment;
 import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.utilities.InternetUtil;
 import com.viven.fragmentstatemanager.FragmentStateManager;
-
-import java.util.ArrayList;
 
 /**
  * Created by sinopsys on 2/18/18.
@@ -36,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     FragmentStateManager fragmentStateManager;
     SwipeRefreshLayout swipeRefreshLayout;
     public RecyclerView mRecyclerView;
-    public ItemAdapter adapter;
+    public MyAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
