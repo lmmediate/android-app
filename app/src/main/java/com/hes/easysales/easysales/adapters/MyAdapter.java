@@ -23,7 +23,38 @@ import java.util.List;
  * Created by sinopsys on 2/23/18.
  */
 
-public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
+    TextView tvName;
+    ImageView ivItem;
+    TextView tvPrice;
+    TextView tvCategory;
+    int itemId;
+
+    MyHolder(View itemView) {
+        super(itemView);
+        tvName = itemView.findViewById(R.id.tvName);
+        ivItem = itemView.findViewById(R.id.ivItem);
+        tvPrice = itemView.findViewById(R.id.tvPrice);
+        tvCategory = itemView.findViewById(R.id.tvCategory);
+    }
+
+    public void setItem(int item) {
+        this.itemId = item;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v instanceof ImageView) {
+            Toast.makeText(v.getContext(), "Image view clicked: " + this.itemId, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(v.getContext(), this.itemId + " ", Toast.LENGTH_SHORT).show();
+        }
+    }
+}
+
+public class ItemAdapter extends RecyclerView.Adapter<MyHolder> {
 
     private Context context;
     private List<Item> data;
@@ -37,14 +68,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public MyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_container, parent, false);
         return new MyHolder(view);
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull MyHolder holder, int position) {
         // Get current position of item in RecyclerView to bind data and assign values from list.
         //
         MyHolder myHolder = (MyHolder) holder;
@@ -90,36 +120,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public int getItemCount() {
         return data.size();
-    }
-
-    class MyHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-
-        TextView tvName;
-        ImageView ivItem;
-        TextView tvPrice;
-        TextView tvCategory;
-        int itemId;
-
-        MyHolder(View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tvName);
-            ivItem = itemView.findViewById(R.id.ivItem);
-            tvPrice = itemView.findViewById(R.id.tvPrice);
-            tvCategory = itemView.findViewById(R.id.tvCategory);
-        }
-
-        public void setItem(int item) {
-            this.itemId = item;
-        }
-
-        @Override
-        public void onClick(View v) {
-            if (v instanceof ImageView) {
-                Toast.makeText(v.getContext(), "Image view clicked: " + this.itemId, Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(v.getContext(), this.itemId + " ", Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 }
 
