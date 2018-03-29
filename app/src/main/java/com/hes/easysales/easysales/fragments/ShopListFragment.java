@@ -27,6 +27,13 @@ public class ShopListFragment extends Fragment {
     RecyclerView rvShopList;
     List<Item> shopListItems;
 
+    public static ShopListFragment newInstance() {
+        ShopListFragment sf = new ShopListFragment();
+        Bundle args = new Bundle();
+        sf.setArguments(args);
+        return sf;
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -58,7 +65,7 @@ public class ShopListFragment extends Fragment {
 
         ItemAdapter adapter = (ItemAdapter) rvShopList.getAdapter();
         if (adapter == null) {
-            adapter = new ItemAdapter(shopListItems, getActivity());
+            adapter = new ItemAdapter(shopListItems, getContext());
             rvShopList.setAdapter(adapter);
         }
     }

@@ -20,6 +20,13 @@ public class FavoritesFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_fav, container, false);
     }
+
+    public static FavoritesFragment newInstance() {
+        FavoritesFragment ff = new FavoritesFragment();
+        Bundle args = new Bundle();
+        ff.setArguments(args);
+        return ff;
+    }
 }
 
 

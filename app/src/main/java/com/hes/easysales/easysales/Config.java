@@ -17,6 +17,8 @@ public class Config {
     public static final String SH_PREFS_NAME = "easy_sales_token";
     public static final String KEY_TOKEN = "user_token";
     public static final String DEF_NO_TOKEN = "NULL";
+    public static final String KEY_ITEMS = "all_items";
+    public static final String KEY_SHOPLIST_ITEMS = "shoplist_items";
 }
 
 

@@ -2,10 +2,12 @@ package com.hes.easysales.easysales.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -18,20 +20,31 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.hes.easysales.easysales.FetchData;
+import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
+import com.hes.easysales.easysales.adapters.ItemAdapter;
 import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListFragment;
 import com.hes.easysales.easysales.utilities.InternetUtil;
-import com.viven.fragmentstatemanager.FragmentStateManager;
+
+import java.util.ArrayList;
 
 /**
  * Created by sinopsys on 2/18/18.
  */
 
 public class MainActivity extends AppCompatActivity {
-    FragmentStateManager fragmentStateManager;
+
     SwipeRefreshLayout swipeRefreshLayout;
+    private static final String TAG_FRAGMENT_ONE = "fragment_one";
+    private static final String TAG_FRAGMENT_TWO = "fragment_two";
+    private static final String TAG_FRAGMENT_THREE = "fragment_three";
+    public Parcelable layoutState;
+    public ItemAdapter adapter;
+    public ItemAdapter shopListAdapter;
+    private FragmentManager fragmentManager;
+    private Fragment currentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,21 +58,13 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
 
         FrameLayout content = findViewById(R.id.fragmentContainer);
-        fragmentStateManager = new FragmentStateManager(content, getSupportFragmentManager()) {
-            @Override
-            public Fragment getItem(int position) {
-                switch (position) {
-                    case 0:
-                        return new FavoritesFragment();
-                    case 1:
-                        return new HomeFragment();
-                    case 2:
-                        return new ShopListFragment();
-                    default:
-                        return null;
-                }
-            }
-        };
+
+        fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TWO);
+        if (fragment == null) {
+            fragment = HomeFragment.newInstance();
+        }
+        replaceFragment(fragment, TAG_FRAGMENT_TWO);
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
@@ -77,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.noInternetToast, Toast.LENGTH_LONG).show();
             startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);
         }
+
+        adapter = new ItemAdapter(new ArrayList<Item>(), this);
     }
 
     private BottomNavigationView.OnNavigationItemReselectedListener reselectNavListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
@@ -102,26 +109,44 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            int position = getNavPositionFromMenuItem(item);
-            if (position != -1) {
-                fragmentStateManager.changeFragment(getNavPositionFromMenuItem(item));
-                return true;
+            switch (item.getItemId()) {
+                case R.id.nav_favorites: {
+                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_ONE);
+                    if (fragment == null) {
+                        fragment = FavoritesFragment.newInstance();
+                    }
+                    replaceFragment(fragment, TAG_FRAGMENT_ONE);
+                    break;
+                }
+                case R.id.nav_home: {
+                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TWO);
+                    if (fragment == null) {
+                        fragment = HomeFragment.newInstance();
+                    }
+                    replaceFragment(fragment, TAG_FRAGMENT_TWO);
+                    break;
+                }
+                case R.id.nav_shoplist: {
+                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_THREE);
+                    if (fragment == null) {
+                        fragment = ShopListFragment.newInstance();
+                    }
+                    replaceFragment(fragment, TAG_FRAGMENT_THREE);
+                    break;
+                }
             }
-
-            return false;
+            return true;
         }
     };
 
-    private int getNavPositionFromMenuItem(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_favorites:
-                return 0;
-            case R.id.nav_home:
-                return 1;
-            case R.id.nav_shoplist:
-                return 2;
+    private void replaceFragment(@NonNull Fragment fragment, @NonNull String tag) {
+        if (!fragment.equals(currentFragment)) {
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment, tag)
+                    .commit();
+            currentFragment = fragment;
         }
-        return -1;
     }
 
     @Override

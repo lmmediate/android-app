@@ -21,6 +21,7 @@ import com.github.aakira.expandablelayout.Utils;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,6 +66,7 @@ class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
 public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Item> items;
+    private ArrayList<Item> itemsCopy;
     private Context context;
     private SparseBooleanArray expandState;
 
@@ -75,6 +77,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         for (int i = 0; i < items.size(); ++i) {
             expandState.append(i, false);
         }
+    }
+
+    public ArrayList<Item> getItemsCopy() {
+        itemsCopy = new ArrayList<>();
+        itemsCopy.addAll(items);
+        return (ArrayList<Item>) itemsCopy.clone();
     }
 
     @Override

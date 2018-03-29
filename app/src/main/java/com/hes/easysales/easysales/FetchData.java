@@ -113,6 +113,7 @@ public class FetchData extends AsyncTask<Void, Void, List<Item>> {
         if (pdLoading.isShowing()) {
             pdLoading.dismiss();
         }
+
         RecyclerView rv = (activityRef.get()).findViewById(R.id.itemList);
         ItemAdapter adapter = (ItemAdapter) rv.getAdapter();
 
