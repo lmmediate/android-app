@@ -1,5 +1,8 @@
 package com.hes.easysales.easysales;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -7,7 +10,7 @@ import org.json.JSONObject;
  * Created by sinopsys on 2/21/18.
  */
 
-public class Item {
+public class Item implements Parcelable {
     private String name;
     private String category;
     private String imageUrl;
@@ -19,6 +22,32 @@ public class Item {
     private String condition;
     private int shopId;
     private boolean expandable = false;
+
+    public Item(Parcel in) {
+        name = in.readString();
+        category = in.readString();
+        imageUrl = in.readString();
+        oldPrice = in.readDouble();
+        newPrice = in.readDouble();
+        discount = in.readString();
+        dateIn = in.readString();
+        dateOut = in.readString();
+        condition = in.readString();
+        shopId = in.readInt();
+        expandable = in.readByte() != 0;
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 
     // Factory method to construct an Item from JSONObject.
     //
@@ -148,6 +177,27 @@ public class Item {
 
     public void setShopId(int shopId) {
         this.shopId = shopId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(category);
+        dest.writeString(imageUrl);
+        dest.writeDouble(oldPrice);
+        dest.writeDouble(newPrice);
+        dest.writeString(discount);
+        dest.writeString(dateIn);
+        dest.writeString(dateOut);
+        dest.writeString(condition);
+        dest.writeInt(shopId);
+        int exe = isExpandable() ? 1 : 0;
+        dest.writeByte((byte) exe);
     }
 }
 
