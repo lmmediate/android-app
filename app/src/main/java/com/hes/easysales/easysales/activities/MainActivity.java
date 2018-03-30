@@ -1,6 +1,7 @@
 package com.hes.easysales.easysales.activities;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -81,6 +83,14 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragmentContainer, new HomeFragment())
                 .commit();
 
+        adapter = new ItemAdapter(new ArrayList<Item>(), this);
+        shopListsPreviewAdapter = new ShopListsPreviewAdapter(new ArrayList<ShopList>(), this);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ((ProgressBar) findViewById(R.id.pbLoading)).setProgress(0, true);
+        } else {
+            ((ProgressBar) findViewById(R.id.pbLoading)).setProgress(0);
+        }
 
         if (InternetUtil.isConnectedToInternet(getApplicationContext())) {
             new FetchData(this, swipeRefreshLayout).execute();
@@ -88,9 +98,6 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, R.string.noInternetToast, Toast.LENGTH_LONG).show();
             startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);
         }
-
-        adapter = new ItemAdapter(new ArrayList<Item>(), this);
-        shopListsPreviewAdapter = new ShopListsPreviewAdapter(new ArrayList<ShopList>(), this);
     }
 
     private BottomNavigationView.OnNavigationItemReselectedListener reselectNavListener = new BottomNavigationView.OnNavigationItemReselectedListener() {

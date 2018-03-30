@@ -30,4 +30,7 @@
     <string name="shops">Shops</string>
     <string name="shoplist_title">ShopList Title</string>
     <string name="shoplistitems">ShopListItems</string>
+    <string name="errorLoadingItems">Error loading products, please try again.</string>
+    <string name="neutral_ok">OK</string>
+    <string name="errorLoadingShopLists">Error loading shopping lists, please try again.</string>
 </resources>

@@ -22,7 +22,6 @@ import java.util.List;
 
 public class HomeFragment extends Fragment {
 
-    private List<Item> items;
     private RecyclerView rvItemList;
     private RecyclerView.LayoutManager layoutManager;
 
@@ -49,20 +48,11 @@ public class HomeFragment extends Fragment {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-//        if (((MainActivity) getActivity()).adapter != null) {
-//            outState.putParcelableArrayList(Config.KEY_ITEMS, ((MainActivity) getActivity()).adapter.getItemsCopy());
-//        }
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-//        if (savedInstanceState != null && savedInstanceState.containsKey(Config.KEY_ITEMS)) {
-//            List<Item> restoredItems = savedInstanceState.getParcelableArrayList(Config.KEY_ITEMS);
-//            ((MainActivity) getActivity()).adapter.addAll(restoredItems);
-//        }
-
         layoutManager = new LinearLayoutManager(getActivity());
         rvItemList.setAdapter(((MainActivity) getActivity()).adapter);
         rvItemList.setLayoutManager(layoutManager);

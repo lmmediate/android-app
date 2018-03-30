@@ -1,129 +1,164 @@
 package com.hes.easysales.easysales;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.RecyclerView;
-import android.widget.Adapter;
+import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.hes.easysales.easysales.activities.MainActivity;
-import com.hes.easysales.easysales.adapters.ItemAdapter;
+import com.hes.easysales.easysales.utilities.SharedPrefsUtil;
 import com.hes.easysales.easysales.utilities.ShopsUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sinopsys on 2/18/18.
  */
 
-public class FetchData extends AsyncTask<Void, Void, List<Item>> {
+public class FetchData {
 
-    private StringBuilder data = new StringBuilder();
-
-    private HttpURLConnection httpURLConnection;
-    private ProgressDialog pdLoading;
+    private ProgressBar pbLoading;
 
     // To prevent the leak of Context.
     //
     private WeakReference<Activity> activityRef;
     private WeakReference<SwipeRefreshLayout> swipeRefreshLayoutRef;
 
-    // CONNECTION_TIMEOUT and READ_TIMEOUT are in milliseconds.
-    //
-    private static final int CONNECTION_TIMEOUT = 10000;
-    private static final int READ_TIMEOUT = 15000;
-
     public FetchData(Activity a, SwipeRefreshLayout sl) {
         activityRef = new WeakReference<>(a);
-        swipeRefreshLayoutRef = new WeakReference<SwipeRefreshLayout>(sl);
+        swipeRefreshLayoutRef = new WeakReference<>(sl);
+        pbLoading = a.findViewById(R.id.pbLoading);
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-
-        String loading = activityRef.get()
-                .getApplicationContext().getString(R.string.loadingTitle);
-
-        pdLoading = new ProgressDialog(activityRef.get());
-        pdLoading.setMessage("\t" + loading);
-        pdLoading.setCancelable(false);
-        pdLoading.show();
+    public void execute() {
+        beforeDownload();
+        downloadItems();
+        downloadShopLists();
+        afterDownload();
     }
 
-    @Override
-    protected List<Item> doInBackground(Void... voids) {
-        try {
-            URL url = new URL(ShopsUtil.getShopUrlWithItemsById(Config.DIXY_SHOP_ID));
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setReadTimeout(READ_TIMEOUT);
-            httpURLConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-            httpURLConnection.setRequestMethod("GET");
-
-            int responseCode = httpURLConnection.getResponseCode();
-
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = br.readLine()) != null) {
-                    data.append(line);
+    private void downloadItems() {
+        Response.Listener<String> respListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (TextUtils.isEmpty(response)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activityRef.get());
+                    builder.setMessage(R.string.errorLoadingItems)
+                            .setNeutralButton(R.string.neutral_ok, null)
+                            .create()
+                            .show();
+                } else {
+                    List<Item> items = new ArrayList<>();
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); ++i) {
+                            JSONObject jo = jsonArray.getJSONObject(i);
+                            items.add(Item.fromJSONObject(jo));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    ((MainActivity) activityRef.get()).adapter.addAll(items);
                 }
-            } else {
-                return null;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            httpURLConnection.disconnect();
-        }
+        };
 
-        List<Item> items = new ArrayList<>();
-
-        try {
-            JSONArray jsonArray = new JSONArray(this.data.toString());
-            for (int i = 0; i < jsonArray.length(); ++i) {
-                JSONObject jo = null;
-                jo = jsonArray.getJSONObject(i);
-                items.add(Item.fromJSONObject(jo));
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                Toast.makeText(activityRef.get(), R.string.errorLoadingItems, Toast.LENGTH_LONG).show();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        };
 
-        return items;
+        APIRequests.RequestHandler rh = APIRequests.formGETRequest(
+                ShopsUtil.getShopUrlWithItemsById(Config.DIXY_SHOP_ID),
+                null,
+                respListener,
+                errListener,
+                new WeakReference<>(activityRef.get().getApplicationContext())
+        );
+
+        rh.launch();
     }
 
-    @Override
-    protected void onPostExecute(List<Item> items) {
-        super.onPostExecute(items);
-        if (pdLoading.isShowing()) {
-            pdLoading.dismiss();
-        }
+    private void downloadShopLists() {
+        Response.Listener<String> respListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                Toast.makeText(activityRef.get(), "In response", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(response)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activityRef.get());
+                    builder.setMessage(R.string.errorLoadingShopLists)
+                            .setNeutralButton(R.string.neutral_ok, null)
+                            .create()
+                            .show();
+                } else {
+                    List<ShopList> shopLists = new ArrayList<>();
+                    try {
+                        response = "[" + response + "," + response + "]";
+                        Toast.makeText(activityRef.get(), response, Toast.LENGTH_SHORT).show();
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); ++i) {
+                            JSONObject jo = jsonArray.getJSONObject(i);
+                            shopLists.add(ShopList.fromJSONObject(jo));
+                        }
+                        Toast.makeText(activityRef.get(), "Array parsed", Toast.LENGTH_SHORT).show();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    ((MainActivity) activityRef.get()).shopListsPreviewAdapter.addAll(shopLists);
+                }
+            }
+        };
 
-        RecyclerView rv = (activityRef.get()).findViewById(R.id.itemList);
-        if (rv != null) {
-            ItemAdapter adapter = (ItemAdapter) rv.getAdapter();
-            adapter.addAll(items);
-        }
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                Toast.makeText(activityRef.get(), R.string.errorLoadingShopLists, Toast.LENGTH_LONG).show();
+            }
+        };
 
+        String userToken = SharedPrefsUtil.getStringPref(activityRef.get(), Config.KEY_TOKEN);
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + userToken);
+
+        APIRequests.RequestHandler rh = APIRequests.formGETRequest(
+                Config.URL_SHOPLISTS,
+                headers,
+                respListener,
+                errListener,
+                new WeakReference<>(activityRef.get().getApplicationContext())
+        );
+
+        rh.launch();
+    }
+
+    private void beforeDownload() {
+        pbLoading.setVisibility(View.VISIBLE);
+    }
+
+    private void afterDownload() {
         // Stop animation of refreshing.
         //
         swipeRefreshLayoutRef.get().setRefreshing(false);
+        pbLoading.setVisibility(View.GONE);
     }
 }
 
