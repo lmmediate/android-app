@@ -66,13 +66,13 @@ public class HomeFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         rvItemList.setAdapter(((MainActivity) getActivity()).adapter);
         rvItemList.setLayoutManager(layoutManager);
-        layoutManager.onRestoreInstanceState(((MainActivity) getActivity()).layoutState);
+        layoutManager.onRestoreInstanceState(((MainActivity) getActivity()).itemsFragmentState);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        ((MainActivity) getActivity()).layoutState = layoutManager.onSaveInstanceState();
+        ((MainActivity) getActivity()).itemsFragmentState = layoutManager.onSaveInstanceState();
     }
 }
 

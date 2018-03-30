@@ -47,21 +47,21 @@ public class ShopListFragment extends Fragment {
     }
 
     private void setData() {
-        for (int i = 0; i < 20; ++i) {
-            Item item = new Item("Name " + String.valueOf(i),
-                    "Name " + String.valueOf(i),
-                    "https://dixy.ru/upload/iblock/814/2000148579.jpg",
-                    i + 100,
-                    i + 50,
-                    i,
-                    "Disc " + String.valueOf(i),
-                    "Datein " + String.valueOf(i),
-                    "Dateout " + String.valueOf(i),
-                    "cond " + String.valueOf(i));
-
-            item.setExpandable(true);
-            shopListItems.add(item);
-        }
+//        for (int i = 0; i < 20; ++i) {
+//            Item item = new Item("Name " + String.valueOf(i),
+//                    "Name " + String.valueOf(i),
+//                    "https://dixy.ru/upload/iblock/814/2000148579.jpg",
+//                    i + 100,
+//                    i + 50,
+//                    i,
+//                    "Disc " + String.valueOf(i),
+//                    "Datein " + String.valueOf(i),
+//                    "Dateout " + String.valueOf(i),
+//                    "cond " + String.valueOf(i));
+//
+//            item.setExpandable(true);
+//            shopListItems.add(item);
+//        }
 
         ItemAdapter adapter = (ItemAdapter) rvShopList.getAdapter();
         if (adapter == null) {

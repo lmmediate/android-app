@@ -10,7 +10,7 @@
     <string name="currency">RUB</string>
     <string name="homeTitle">Home</string>
     <string name="favoritesTitle">Favorites</string>
-    <string name="shoppingList">Shopping List</string>
+    <string name="shoppingLists">Shopping Lists</string>
     <string name="noInternetToast">You are not connected to the internet, please select a network to work with. Opening Settings..</string>
     <string name="pleaseLogIn">To use shopping list, please log into account:</string>
     <string name="username">Username</string>
@@ -27,4 +27,7 @@
     <string name="shop1">Dixy</string>
     <string name="shop2">Perekrestok</string>
     <string name="shop3">Auchan</string>
+    <string name="shops">Shops</string>
+    <string name="shoplist_title">ShopList Title</string>
+    <string name="shoplistitems">ShopListItems</string>
 </resources>

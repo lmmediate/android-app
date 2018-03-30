@@ -116,9 +116,10 @@ public class FetchData extends AsyncTask<Void, Void, List<Item>> {
         }
 
         RecyclerView rv = (activityRef.get()).findViewById(R.id.itemList);
-        ItemAdapter adapter = (ItemAdapter) rv.getAdapter();
-
-        adapter.addAll(items);
+        if (rv != null) {
+            ItemAdapter adapter = (ItemAdapter) rv.getAdapter();
+            adapter.addAll(items);
+        }
 
         // Stop animation of refreshing.
         //
