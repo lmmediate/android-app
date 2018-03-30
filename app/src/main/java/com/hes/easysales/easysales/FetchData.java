@@ -9,6 +9,7 @@ import android.widget.Adapter;
 
 import com.hes.easysales.easysales.activities.MainActivity;
 import com.hes.easysales.easysales.adapters.ItemAdapter;
+import com.hes.easysales.easysales.utilities.ShopsUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +67,7 @@ public class FetchData extends AsyncTask<Void, Void, List<Item>> {
     @Override
     protected List<Item> doInBackground(Void... voids) {
         try {
-            URL url = new URL(Config.URL_SALES_SHOP_1);
+            URL url = new URL(ShopsUtil.getShopUrlWithItemsById(Config.DIXY_SHOP_ID));
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setReadTimeout(READ_TIMEOUT);
             httpURLConnection.setConnectTimeout(CONNECTION_TIMEOUT);
