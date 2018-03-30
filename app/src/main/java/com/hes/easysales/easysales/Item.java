@@ -3,6 +3,7 @@ package com.hes.easysales.easysales;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -49,6 +50,21 @@ public class Item implements Parcelable {
         );
     }
 
+    // Factory method to construct a CustomItem from JSONObject and an array of matching objects.
+    //
+    public static Item customItemFromJSONObject(JSONObject jo, JSONArray jMatchingItems) throws JSONException {
+        Item item = new Item();
+        List<Item> matchingItems = new ArrayList<>();
+        for (int i = 0; i < jMatchingItems.length(); i++) {
+            JSONObject curr = jMatchingItems.getJSONObject(i);
+            matchingItems.add(fromJSONObject(curr));
+        }
+        item.setName(jo.getString("name"));
+        item.setExpandable(true);
+        item.setMatchingItems(matchingItems);
+        return item;
+    }
+
     public Item(Parcel in) {
         name = in.readString();
         category = in.readString();
@@ -76,7 +92,9 @@ public class Item implements Parcelable {
         }
     };
 
-    private Item() {
+    // FIXME it is public for debugging purposes.
+    //
+    public Item() {
     }
 
     private Item(String name,
