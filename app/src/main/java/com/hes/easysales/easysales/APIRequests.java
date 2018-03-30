@@ -14,6 +14,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.lang.ref.WeakReference;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by sinopsys on 3/27/18.
@@ -21,8 +23,16 @@ import java.lang.ref.WeakReference;
 
 public class APIRequests {
 
-    public static RequestHandler formGETRequest(String requestUrl, Response.Listener rl, Response.ErrorListener rel, WeakReference<Context> c) {
-        StringRequest sr = new StringRequest(Request.Method.GET, requestUrl, rl, rel);
+    public static RequestHandler formGETRequest(String requestUrl, final Map<String, String> headers, Response.Listener rl, Response.ErrorListener rel, WeakReference<Context> c) {
+        StringRequest sr = new StringRequest(Request.Method.GET, requestUrl, rl, rel) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                if (headers != null) {
+                    return headers;
+                }
+                return super.getHeaders();
+            }
+        };
         RequestHandler gr = new RequestHandler(sr, c.get());
         return gr;
     }
@@ -57,7 +67,8 @@ public class APIRequests {
         private Context c;
         private RequestQueue rq;
 
-        private RequestHandler() {}
+        private RequestHandler() {
+        }
 
         private RequestHandler(Request r, Context c) {
             this.r = r;
