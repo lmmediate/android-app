@@ -2,6 +2,7 @@ package com.hes.easysales.easysales.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -92,7 +94,20 @@ public class MainActivity extends AppCompatActivity {
             // Scroll to top if reselected.
             //
             if (item.getItemId() == R.id.nav_home) {
-                ((RecyclerView) findViewById(R.id.itemList)).scrollToPosition(0);
+                int pos = ((LinearLayoutManager) (((RecyclerView) findViewById(R.id.itemList))
+                        .getLayoutManager())).findFirstVisibleItemPosition();
+                int offset = 10;
+                if (pos > offset) {
+                    ((RecyclerView) findViewById(R.id.itemList)).smoothScrollToPosition(pos - offset);
+                }
+                Handler mHandler = new Handler();
+                Runnable codeToRun = new Runnable() {
+                    @Override
+                    public void run() {
+                        ((RecyclerView) findViewById(R.id.itemList)).scrollToPosition(0);
+                    }
+                };
+                mHandler.postDelayed(codeToRun, 200);
             }
         }
     };
