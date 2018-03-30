@@ -6,11 +6,15 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by sinopsys on 2/21/18.
  */
 
 public class Item implements Parcelable {
+
     private String name;
     private String category;
     private String imageUrl;
@@ -21,33 +25,12 @@ public class Item implements Parcelable {
     private String dateOut;
     private String condition;
     private int shopId;
+    // These fields are initialized explicitly using setters!
+    // Factory method keeps them default.
+    // However, Parcel keeps them for future reuse.
+    //
     private boolean expandable = false;
-
-    public Item(Parcel in) {
-        name = in.readString();
-        category = in.readString();
-        imageUrl = in.readString();
-        oldPrice = in.readDouble();
-        newPrice = in.readDouble();
-        discount = in.readString();
-        dateIn = in.readString();
-        dateOut = in.readString();
-        condition = in.readString();
-        shopId = in.readInt();
-        expandable = in.readByte() != 0;
-    }
-
-    public static final Creator<Item> CREATOR = new Creator<Item>() {
-        @Override
-        public Item createFromParcel(Parcel in) {
-            return new Item(in);
-        }
-
-        @Override
-        public Item[] newArray(int size) {
-            return new Item[size];
-        }
-    };
+    private List<Item> matchingItems = new ArrayList<>();
 
     // Factory method to construct an Item from JSONObject.
     //
@@ -66,29 +49,79 @@ public class Item implements Parcelable {
         );
     }
 
+    public Item(Parcel in) {
+        name = in.readString();
+        category = in.readString();
+        imageUrl = in.readString();
+        oldPrice = in.readDouble();
+        newPrice = in.readDouble();
+        discount = in.readString();
+        dateIn = in.readString();
+        dateOut = in.readString();
+        condition = in.readString();
+        shopId = in.readInt();
+        expandable = in.readByte() != 0;
+        in.readTypedList(matchingItems, Item.CREATOR);
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
+
     private Item() {
     }
 
-    public Item(String name,
-                String category,
-                String imageUrl,
-                double oldPrice,
-                double newPrice,
-                int shopId,
-                String discount,
-                String dateIn,
-                String dateOut,
-                String condition) {
+    private Item(String name,
+                 String category,
+                 String imageUrl,
+                 double oldPrice,
+                 double newPrice,
+                 int shopId,
+                 String discount,
+                 String dateIn,
+                 String dateOut,
+                 String condition) {
 
         this.name = name;
         this.category = category;
         this.imageUrl = imageUrl;
         this.oldPrice = oldPrice;
         this.newPrice = newPrice;
+        this.shopId = shopId;
         this.discount = discount;
         this.dateIn = dateIn;
         this.dateOut = dateOut;
         this.condition = condition;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(category);
+        dest.writeString(imageUrl);
+        dest.writeDouble(oldPrice);
+        dest.writeDouble(newPrice);
+        dest.writeString(discount);
+        dest.writeString(dateIn);
+        dest.writeString(dateOut);
+        dest.writeString(condition);
+        dest.writeInt(shopId);
+        int exe = isExpandable() ? 1 : 0;
+        dest.writeByte((byte) exe);
+        dest.writeTypedList(matchingItems);
     }
 
     public String getName() {
@@ -123,6 +156,10 @@ public class Item implements Parcelable {
         return dateOut;
     }
 
+    public int getShopId() {
+        return shopId;
+    }
+
     public String getCondition() {
         return condition;
     }
@@ -131,12 +168,8 @@ public class Item implements Parcelable {
         return expandable;
     }
 
-    public int getShopId() {
-        return shopId;
-    }
-
-    public void setExpandable(boolean expandable) {
-        this.expandable = expandable;
+    public List<Item> getMatchingItems() {
+        return matchingItems;
     }
 
     public void setName(String name) {
@@ -179,25 +212,12 @@ public class Item implements Parcelable {
         this.shopId = shopId;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setExpandable(boolean expandable) {
+        this.expandable = expandable;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(name);
-        dest.writeString(category);
-        dest.writeString(imageUrl);
-        dest.writeDouble(oldPrice);
-        dest.writeDouble(newPrice);
-        dest.writeString(discount);
-        dest.writeString(dateIn);
-        dest.writeString(dateOut);
-        dest.writeString(condition);
-        dest.writeInt(shopId);
-        int exe = isExpandable() ? 1 : 0;
-        dest.writeByte((byte) exe);
+    public void setMatchingItems(List<Item> matchingItems) {
+        this.matchingItems = matchingItems;
     }
 }
 
