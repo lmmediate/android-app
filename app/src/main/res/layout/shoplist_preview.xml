@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/shopListPreviewLayout"
+    android:layout_width="wrap_content"
+    android:clickable="true"
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:focusable="true">
+
+    <TextView
+        android:id="@+id/tvTitlePreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="@string/shoplist_title"
+        android:textSize="20sp" />
+
+    <TextView
+        android:id="@+id/tvItemsPreview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitlePreview"
+        android:text="@string/shoplistitems" />
+
+</RelativeLayout>
+
+<!--EOF-->

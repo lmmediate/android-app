@@ -24,10 +24,13 @@ import android.widget.Toast;
 import com.hes.easysales.easysales.FetchData;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
+import com.hes.easysales.easysales.ShopList;
 import com.hes.easysales.easysales.adapters.ItemAdapter;
+import com.hes.easysales.easysales.adapters.ShopListsPreviewAdapter;
 import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListFragment;
+import com.hes.easysales.easysales.fragments.ShopListsPreviewFragment;
 import com.hes.easysales.easysales.utilities.InternetUtil;
 
 import java.util.ArrayList;
@@ -42,9 +45,10 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT_ONE = "fragment_one";
     private static final String TAG_FRAGMENT_TWO = "fragment_two";
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
-    public Parcelable layoutState;
+    public Parcelable itemsFragmentState;
+    public Parcelable shopListsPreviewFragmentState;
     public ItemAdapter adapter;
-    public ItemAdapter shopListAdapter;
+    public ShopListsPreviewAdapter shopListsPreviewAdapter;
     private FragmentManager fragmentManager;
     private Fragment currentFragment;
 
@@ -86,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         adapter = new ItemAdapter(new ArrayList<Item>(), this);
+        shopListsPreviewAdapter = new ShopListsPreviewAdapter(new ArrayList<ShopList>(), this);
     }
 
     private BottomNavigationView.OnNavigationItemReselectedListener reselectNavListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
@@ -144,7 +149,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_shoplist: {
                     Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_THREE);
                     if (fragment == null) {
-                        fragment = ShopListFragment.newInstance();
+//                        fragment = ShopListFragment.newInstance();
+                        fragment = ShopListsPreviewFragment.newInstance();
                     }
                     replaceFragment(fragment, TAG_FRAGMENT_THREE);
                     break;
