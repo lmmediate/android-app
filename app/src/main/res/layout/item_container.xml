@@ -9,7 +9,7 @@
 
     <ImageView
         android:layout_width="80dp"
-        android:scaleType="fitXY"
+        android:scaleType="fitCenter"
         android:layout_height="80dp"
         android:contentDescription="@string/imageViewDescription"
         android:id="@+id/ivItem"/>
@@ -43,7 +43,10 @@
         android:layout_alignParentEnd="true"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:background="@drawable/ic_add_black_24dp"/>
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:background="@drawable/ic_add_black_24dp"
+        android:focusable="true" />
 
     <TextView
         android:layout_width="wrap_content"
