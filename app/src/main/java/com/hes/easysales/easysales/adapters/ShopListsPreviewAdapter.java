@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hes.easysales.easysales.Item;
@@ -21,10 +22,11 @@ import java.util.List;
 class ShopListPreviewViewHolder extends RecyclerView.ViewHolder {
     TextView tvTitlePreview;
     TextView tvItemsPreview;
+    RelativeLayout btnShowShopList;
 
     public ShopListPreviewViewHolder(View itemView) {
         super(itemView);
-
+        this.btnShowShopList = itemView.findViewById(R.id.shopListPreviewLayout);
         this.tvTitlePreview = itemView.findViewById(R.id.tvTitlePreview);
         this.tvItemsPreview = itemView.findViewById(R.id.tvItemsPreview);
     }
@@ -55,8 +57,16 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
             itemsPreview.append(i.getName());
             itemsPreview.append("\n");
         }
+        if (sl.getCustomItems().size() > 0) {
+            itemsPreview.append("\n");
+        }
+        for (Item i : sl.getCustomItems()) {
+            itemsPreview.append(i.getName());
+            itemsPreview.append("\n");
+        }
         holder.tvTitlePreview.setText(sl.getName());
         holder.tvItemsPreview.setText(itemsPreview.toString());
+        holder.btnShowShopList.setOnClickListener(showShopListListener);
     }
 
     @Override
@@ -71,6 +81,13 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
         shopLists.addAll(newShopLists);
         notifyItemRangeInserted(0, shopLists.size());
     }
+
+    View.OnClickListener showShopListListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            //sadf
+        }
+    };
 }
 
 
