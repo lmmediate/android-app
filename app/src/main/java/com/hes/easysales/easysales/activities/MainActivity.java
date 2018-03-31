@@ -43,7 +43,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    SwipeRefreshLayout swipeRefreshLayout;
+    private boolean doubleBackToExitPressedOnce = false;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG_FRAGMENT_ONE = "fragment_one";
     private static final String TAG_FRAGMENT_TWO = "fragment_two";
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
@@ -214,6 +215,25 @@ public class MainActivity extends AppCompatActivity {
                 //
                 return super.onOptionsItemSelected(item);
 
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getSupportFragmentManager().getBackStackEntryCount() > 0) {
+            getSupportFragmentManager().popBackStack();
+        } else if (!doubleBackToExitPressedOnce) {
+            this.doubleBackToExitPressedOnce = true;
+            Toast.makeText(this, R.string.doubleBackExit, Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    doubleBackToExitPressedOnce = false;
+                }
+            }, 2000);
+        } else {
+            setResult(0);
+            finish();
         }
     }
 }

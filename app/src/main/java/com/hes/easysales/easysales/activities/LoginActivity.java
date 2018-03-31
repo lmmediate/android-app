@@ -128,7 +128,14 @@ public class LoginActivity extends AppCompatActivity {
 
     private void showMainActivity() {
         Intent i = new Intent(LoginActivity.this, MainActivity.class);
-        startActivity(i);
+        startActivityForResult(i, 0);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 0) {
+            finish();
+        }
     }
 }
 

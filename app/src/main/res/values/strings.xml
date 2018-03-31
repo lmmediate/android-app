@@ -33,4 +33,5 @@
     <string name="errorLoadingItems">Error loading products, please try again.</string>
     <string name="neutral_ok">OK</string>
     <string name="errorLoadingShopLists">Error loading shopping lists, please try again.</string>
+    <string name="doubleBackExit">Please click BACK again to exit.</string>
 </resources>
