@@ -49,10 +49,10 @@ public class ShopList implements Parcelable {
             JSONObject curr = itemsJSONArray.getJSONObject(i);
             items.add(Item.fromJSONObject(curr));
         }
-        JSONArray customItemsJSONArray = jo.getJSONArray("customItems");
+        JSONArray customItemsJSONArray = jo.optJSONArray("customItems");
         for (int i = 0; i < customItemsJSONArray.length(); i++) {
             JSONObject curr = customItemsJSONArray.getJSONObject(i);
-            JSONArray matchingItems = curr.getJSONArray("matchingItems");
+            JSONArray matchingItems = curr.optJSONArray("matchingItems");
             customItems.add(Item.customItemFromJSONObject(curr, matchingItems));
         }
         return new ShopList(

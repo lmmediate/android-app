@@ -37,16 +37,16 @@ public class Item implements Parcelable {
     //
     public static Item fromJSONObject(JSONObject jo) throws JSONException {
         return new Item(
-                jo.getString("name"),
-                jo.getString("category"),
-                jo.getString("imageUrl"),
-                jo.getDouble("oldPrice"),
-                jo.getDouble("newPrice"),
-                jo.getInt("shopId"),
-                jo.getString("discount"),
-                jo.getString("dateIn"),
-                jo.getString("dateOut"),
-                jo.getString("condition")
+                jo.optString("name"),
+                jo.optString("category"),
+                jo.optString("imageUrl"),
+                jo.optDouble("oldPrice"),
+                jo.optDouble("newPrice"),
+                jo.optInt("shopId"),
+                jo.optString("discount"),
+                jo.optString("dateIn"),
+                jo.optString("dateOut"),
+                jo.optString("condition")
         );
     }
 
@@ -59,7 +59,7 @@ public class Item implements Parcelable {
             JSONObject curr = jMatchingItems.getJSONObject(i);
             matchingItems.add(fromJSONObject(curr));
         }
-        item.setName(jo.getString("name"));
+        item.setName(jo.optString("name"));
         item.setExpandable(true);
         item.setMatchingItems(matchingItems);
         return item;
