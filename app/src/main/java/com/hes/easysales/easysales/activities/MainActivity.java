@@ -31,7 +31,6 @@ import com.hes.easysales.easysales.adapters.ItemAdapter;
 import com.hes.easysales.easysales.adapters.ShopListsPreviewAdapter;
 import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
-import com.hes.easysales.easysales.fragments.ShopListFragment;
 import com.hes.easysales.easysales.fragments.ShopListsPreviewFragment;
 import com.hes.easysales.easysales.utilities.InternetUtil;
 
@@ -160,7 +159,6 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.nav_shoplist: {
                     Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_THREE);
                     if (fragment == null) {
-//                        fragment = ShopListFragment.newInstance();
                         fragment = ShopListsPreviewFragment.newInstance();
                     }
                     replaceFragment(fragment, TAG_FRAGMENT_THREE);

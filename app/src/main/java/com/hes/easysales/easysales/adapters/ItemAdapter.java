@@ -70,8 +70,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private ArrayList<Item> itemsCopy;
     private Context context;
     private SparseBooleanArray expandState;
-    private boolean dixyDownloaded = false;
-    private boolean perekDownloaded = false;
+    private boolean type1Downloaded = false;
+    private boolean type2Downloaded = false;
 
     public ItemAdapter(List<Item> items, Context c) {
         expandState = new SparseBooleanArray();
@@ -205,24 +205,26 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public void clearTmpItems() {
         tmpItems.clear();
-        dixyDownloaded = perekDownloaded = false;
+        type1Downloaded = type2Downloaded = false;
     }
 
     public void addAllTmpItems(List<Item> newItems) {
         tmpItems.addAll(newItems);
-        if (dixyDownloaded ^ perekDownloaded) {
-            dixyDownloaded = perekDownloaded = true;
+        if (type1Downloaded ^ type2Downloaded) {
+            type1Downloaded = type2Downloaded = true;
         }
-        if (!dixyDownloaded && !perekDownloaded) {
-            dixyDownloaded = true;
+        if (!type1Downloaded && !type2Downloaded) {
+            type1Downloaded = true;
         }
     }
 
     public void subsItemsWithTemp() {
-        if (dixyDownloaded && perekDownloaded) {
+        if (type1Downloaded && type2Downloaded) {
             this.addAll(tmpItems);
-            dixyDownloaded = perekDownloaded = false;
-            ((MainActivity) context).fetchData.afterDownload();
+            type1Downloaded = type2Downloaded = false;
+            if (context instanceof MainActivity) {
+                ((MainActivity) context).fetchData.afterDownload();
+            }
         }
     }
 

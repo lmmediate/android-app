@@ -21,6 +21,7 @@ public class Config {
     public static final String DEF_NO_TOKEN = "NULL";
     public static final String KEY_ITEMS = "all_items";
     public static final String KEY_SHOPLIST_ITEMS = "shoplist_items";
+    public static final String KEY_CURRENT_SHOPLIST = "com.hes.easysales.easysales.ShopList.";
     public static final int DIXY_SHOP_ID = 1;
     public static final int PEREKRESTOK_SHOP_ID = 2;
 }

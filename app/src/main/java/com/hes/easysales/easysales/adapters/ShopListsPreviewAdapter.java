@@ -1,6 +1,7 @@
 package com.hes.easysales.easysales.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,8 +13,11 @@ import android.widget.TextView;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.ShopList;
+import com.hes.easysales.easysales.activities.ShopListActivity;
 
 import java.util.List;
+
+import static com.hes.easysales.easysales.Config.KEY_CURRENT_SHOPLIST;
 
 /**
  * Created by sinopsys on 3/30/18.
@@ -33,7 +37,7 @@ class ShopListPreviewViewHolder extends RecyclerView.ViewHolder {
 }
 
 public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPreviewViewHolder> {
-    private List<ShopList> shopLists;
+    public List<ShopList> shopLists;
     private Context context;
 
     public ShopListsPreviewAdapter(List<ShopList> shopLists, Context context) {
@@ -50,7 +54,7 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ShopListPreviewViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ShopListPreviewViewHolder holder, final int position) {
         ShopList sl = shopLists.get(position);
         StringBuilder itemsPreview = new StringBuilder();
         for (Item i : sl.getItems()) {
@@ -66,7 +70,15 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
         }
         holder.tvTitlePreview.setText(sl.getName());
         holder.tvItemsPreview.setText(itemsPreview.toString());
-        holder.btnShowShopList.setOnClickListener(showShopListListener);
+        holder.btnShowShopList.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(context, ShopListActivity.class);
+                        i.putExtra(KEY_CURRENT_SHOPLIST, shopLists.get(position));
+                        context.startActivity(i);
+                    }
+                });
     }
 
     @Override
@@ -81,13 +93,6 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
         shopLists.addAll(newShopLists);
         notifyItemRangeInserted(0, shopLists.size());
     }
-
-    View.OnClickListener showShopListListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            //sadf
-        }
-    };
 }
 
 
