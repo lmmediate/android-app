@@ -20,6 +20,7 @@ import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.github.aakira.expandablelayout.Utils;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
+import com.hes.easysales.easysales.activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,6 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder {
     TextView tvPrice;
     TextView tvCategory;
     private Button btnAdd;
-
 
     ItemViewHolderWithoutChild(View itemView) {
         super(itemView);
@@ -66,13 +66,17 @@ class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
 public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<Item> items;
+    private List<Item> tmpItems;
     private ArrayList<Item> itemsCopy;
     private Context context;
     private SparseBooleanArray expandState;
+    private boolean dixyDownloaded = false;
+    private boolean perekDownloaded = false;
 
     public ItemAdapter(List<Item> items, Context c) {
         expandState = new SparseBooleanArray();
         this.items = items;
+        this.tmpItems = new ArrayList<>();
         this.context = c;
         for (int i = 0; i < items.size(); ++i) {
             expandState.append(i, false);
@@ -197,6 +201,29 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyItemRangeRemoved(0, oldSz);
         items.addAll(newItems);
         notifyItemRangeInserted(0, items.size());
+    }
+
+    public void clearTmpItems() {
+        tmpItems.clear();
+        dixyDownloaded = perekDownloaded = false;
+    }
+
+    public void addAllTmpItems(List<Item> newItems) {
+        tmpItems.addAll(newItems);
+        if (dixyDownloaded ^ perekDownloaded) {
+            dixyDownloaded = perekDownloaded = true;
+        }
+        if (!dixyDownloaded && !perekDownloaded) {
+            dixyDownloaded = true;
+        }
+    }
+
+    public void subsItemsWithTemp() {
+        if (dixyDownloaded && perekDownloaded) {
+            this.addAll(tmpItems);
+            dixyDownloaded = perekDownloaded = false;
+            ((MainActivity) context).fetchData.afterDownload();
+        }
     }
 
     public void removeAt(int adapterPosition) {

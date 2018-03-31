@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     public Parcelable shopListsPreviewFragmentState;
     public ItemAdapter adapter;
     public ShopListsPreviewAdapter shopListsPreviewAdapter;
+    public FetchData fetchData;
     private FragmentManager fragmentManager;
     private Fragment currentFragment;
 
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity {
 
         swipeRefreshLayout = findViewById(R.id.swipeContainer);
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
+
+        fetchData = new FetchData(this, swipeRefreshLayout);
 
         FrameLayout content = findViewById(R.id.fragmentContainer);
 
@@ -93,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (InternetUtil.isConnectedToInternet(getApplicationContext())) {
-            new FetchData(this, swipeRefreshLayout).execute();
+            fetchData.execute();
         } else {
             Toast.makeText(this, R.string.noInternetToast, Toast.LENGTH_LONG).show();
             startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);

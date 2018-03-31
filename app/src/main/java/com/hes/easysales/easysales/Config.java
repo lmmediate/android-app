@@ -9,8 +9,8 @@ public class Config {
     public static final String URL_CORE = "http://46.17.44.125:8080/";
     public static final String URL_LOGIN = URL_CORE + "auth/login/";
     public static final String URL_SALES_SHOP = URL_CORE + "api/shops/";
-    public static final String URL_SHOPLISTS_PREVIEW = URL_CORE + "api/shoplist?preview=true";
-    public static final String URL_SHOPLISTS = URL_CORE + "api/all_shoplists/"; // FIXME not real api endpoint
+    public static final String URL_SHOPLISTS_PREVIEW = URL_CORE + "api/shoplist?mode=preview";
+    public static final String URL_SHOPLISTS = URL_CORE + "api/shoplist?mode=full";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String TAG_VOLLEY_ERROR = "VOLLEY";

@@ -48,7 +48,7 @@ public class FetchData {
         beforeDownload();
         downloadItems();
         downloadShopLists();
-        afterDownload();
+//        afterDownload();
     }
 
     private void downloadItems() {
@@ -72,7 +72,8 @@ public class FetchData {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    ((MainActivity) activityRef.get()).adapter.addAll(items);
+                    ((MainActivity) activityRef.get()).adapter.addAllTmpItems(items);
+                    ((MainActivity) activityRef.get()).adapter.subsItemsWithTemp();
                 }
             }
         };
@@ -92,15 +93,22 @@ public class FetchData {
                 errListener,
                 new WeakReference<>(activityRef.get().getApplicationContext())
         );
-
         rh.launch();
+
+        APIRequests.RequestHandler rh1 = APIRequests.formGETRequest(
+                ShopsUtil.getShopUrlWithItemsById(Config.PEREKRESTOK_SHOP_ID),
+                null,
+                respListener,
+                errListener,
+                new WeakReference<>(activityRef.get().getApplicationContext())
+        );
+        rh1.launch();
     }
 
     private void downloadShopLists() {
         Response.Listener<String> respListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(activityRef.get(), "In response", Toast.LENGTH_SHORT).show();
                 if (TextUtils.isEmpty(response)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(activityRef.get());
                     builder.setMessage(R.string.errorLoadingShopLists)
@@ -110,14 +118,11 @@ public class FetchData {
                 } else {
                     List<ShopList> shopLists = new ArrayList<>();
                     try {
-                        response = "[" + response + "," + response + "]";
-                        Toast.makeText(activityRef.get(), response, Toast.LENGTH_SHORT).show();
                         JSONArray jsonArray = new JSONArray(response);
                         for (int i = 0; i < jsonArray.length(); ++i) {
                             JSONObject jo = jsonArray.getJSONObject(i);
                             shopLists.add(ShopList.fromJSONObject(jo));
                         }
-                        Toast.makeText(activityRef.get(), "Array parsed", Toast.LENGTH_SHORT).show();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -152,9 +157,10 @@ public class FetchData {
 
     private void beforeDownload() {
         pbLoading.setVisibility(View.VISIBLE);
+        ((MainActivity) activityRef.get()).adapter.clearTmpItems();
     }
 
-    private void afterDownload() {
+    public void afterDownload() {
         // Stop animation of refreshing.
         //
         swipeRefreshLayoutRef.get().setRefreshing(false);
