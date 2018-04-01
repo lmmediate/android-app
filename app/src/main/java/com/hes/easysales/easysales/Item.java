@@ -2,12 +2,14 @@ package com.hes.easysales.easysales;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -236,6 +238,29 @@ public class Item implements Parcelable {
 
     public void setMatchingItems(List<Item> matchingItems) {
         this.matchingItems = matchingItems;
+    }
+
+    public static Comparator<Item> getShopIdComparator() {
+        return new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                return o1.shopId < o2.shopId ? -1 : 1;
+            }
+        };
+    }
+
+    public static Comparator<Item> getNewPriceComparator() {
+        return new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                if (o1.newPrice < o2.newPrice) {
+                    return -1;
+                } else if (o1.newPrice > o2.newPrice) {
+                    return 1;
+                }
+                return 0;
+            }
+        };
     }
 }
 

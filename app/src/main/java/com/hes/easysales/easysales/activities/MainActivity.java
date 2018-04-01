@@ -14,7 +14,9 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -35,8 +37,12 @@ import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListsPreviewFragment;
 import com.hes.easysales.easysales.utilities.InternetUtil;
+import com.hes.easysales.easysales.utilities.ShopsUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.hes.easysales.easysales.Config.DIXY_SHOP_ID;
 import static com.hes.easysales.easysales.Config.PEREKRESTOK_SHOP_ID;
@@ -52,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT_ONE = "fragment_one";
     private static final String TAG_FRAGMENT_TWO = "fragment_two";
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
+    private String selectedShop = "all";
     public Parcelable itemsFragmentState;
     public Parcelable shopListsPreviewFragmentState;
     public ItemAdapter adapter;
@@ -191,26 +198,50 @@ public class MainActivity extends AppCompatActivity {
         //
         getMenuInflater().inflate(R.menu.app_bar_items, menu);
         Spinner spinner = findViewById(R.id.spnrShopList);
-        String[] shops = {getString(R.string.shop1), getString(R.string.shop2)};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+        String[] shops = {getString(R.string.all_shops), getString(R.string.shop1), getString(R.string.shop2)};
+        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, shops);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position + 1) {
+                switch (position) {
                     case DIXY_SHOP_ID:
-                        // TODO Filter RV to show dixy items.
+                        MainActivity.this.adapter.filter("shopId", String.valueOf(DIXY_SHOP_ID), false);
+                        selectedShop = ShopsUtil.getShopAliasById(DIXY_SHOP_ID);
                         return;
                     case PEREKRESTOK_SHOP_ID:
-                        // TODO Filter RV to show perekrestok items.
+                        MainActivity.this.adapter.filter("shopId", String.valueOf(PEREKRESTOK_SHOP_ID), false);
+                        selectedShop = ShopsUtil.getShopAliasById(PEREKRESTOK_SHOP_ID);
                         return;
+                    default:
+                        MainActivity.this.adapter.filter("shopId", "", false);
+                        selectedShop = "all";
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                MainActivity.this.adapter.filter("name", query, false);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (TextUtils.isEmpty(newText)) {
+                    MainActivity.this.adapter.filter("name", newText, false);
+                }
+                return false;
             }
         });
         return true;
@@ -222,13 +253,16 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
                 //
+//                List<String> query = new ArrayList<>();
+//                query.add("Кофе, чай");
+//                query.add("Наши марки");
+//                adapter.new ComplexQuery("category", query).apply();
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 //
                 return super.onOptionsItemSelected(item);
-
         }
     }
 
@@ -248,6 +282,20 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setResult(0);
             finish();
+        }
+    }
+
+    public void filterSelectedShops() {
+        switch (selectedShop) {
+            case "dixy":
+                adapter.filter("shopId", String.valueOf(DIXY_SHOP_ID), false);
+                break;
+            case "perekrestok":
+                adapter.filter("shopId", String.valueOf(PEREKRESTOK_SHOP_ID), false);
+                break;
+            default:
+                adapter.filter("shopId", "", false);
+                break;
         }
     }
 }

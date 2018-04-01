@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,7 +25,9 @@ import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.activities.MainActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sinopsys on 3/28/18.
@@ -74,9 +78,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private boolean type2Downloaded = false;
 
     public ItemAdapter(List<Item> items, Context c) {
-        expandState = new SparseBooleanArray();
+        this.expandState = new SparseBooleanArray();
         this.items = items;
         this.tmpItems = new ArrayList<>();
+        this.itemsCopy = new ArrayList<>();
         this.context = c;
         for (int i = 0; i < items.size(); ++i) {
             expandState.append(i, false);
@@ -84,8 +89,6 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public ArrayList<Item> getItemsCopy() {
-        itemsCopy = new ArrayList<>();
-        itemsCopy.addAll(items);
         return (ArrayList<Item>) itemsCopy.clone();
     }
 
@@ -184,6 +187,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void add(Item newItem) {
         items.add(newItem);
         notifyItemRangeInserted(items.size() - 1, 1);
+        itemsCopy.add(newItem);
     }
 
     public void add(Item item, int position) {
@@ -201,6 +205,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyItemRangeRemoved(0, oldSz);
         items.addAll(newItems);
         notifyItemRangeInserted(0, items.size());
+        itemsCopy.clear();
+        itemsCopy.addAll(newItems);
     }
 
     public void clearTmpItems() {
@@ -224,6 +230,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             type1Downloaded = type2Downloaded = false;
             if (context instanceof MainActivity) {
                 ((MainActivity) context).fetchData.afterDownload();
+                Collections.sort(items, Item.getShopIdComparator());
+                notifyDataSetChanged();
             }
         }
     }
@@ -231,6 +239,64 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void removeAt(int adapterPosition) {
         items.remove(adapterPosition);
         notifyItemRemoved(adapterPosition);
+    }
+
+    public void filter(String key, String query, boolean multipleFilters) {
+        if (query.isEmpty()) {
+            items.clear();
+            items.addAll(itemsCopy);
+            Collections.sort(items, Item.getShopIdComparator());
+        } else {
+            if (!multipleFilters) {
+                items.clear();
+            }
+            items.addAll(itemsMatchingQuery(key, query));
+        }
+        notifyDataSetChanged();
+    }
+
+    private List<Item> itemsMatchingQuery(String key, String query) {
+        ArrayList<Item> queryResult = new ArrayList<>();
+        query = query.toLowerCase();
+        if (!query.isEmpty()) {
+            for (Item item : itemsCopy) {
+                String compare = "";
+                switch (key) {
+                    case "category":
+                        compare = item.getCategory().toLowerCase();
+                        break;
+                    case "name":
+                        compare = item.getName().toLowerCase();
+                        break;
+                    case "shopId":
+                        compare = String.valueOf(item.getShopId());
+                        break;
+                }
+                if (compare.contains(query)) {
+                    queryResult.add(item);
+                }
+            }
+        }
+        return queryResult;
+    }
+
+    public class ComplexQuery {
+
+        // Need to use Map<String, List<String>>
+        private String key;
+        private List<String> query;
+
+        public ComplexQuery(String key, List<String> query) {
+            this.key = key;
+            this.query = query;
+        }
+
+        public void apply() {
+            items.clear();
+            for (String value : query) {
+                filter(key, value, true);
+            }
+        }
     }
 }
 

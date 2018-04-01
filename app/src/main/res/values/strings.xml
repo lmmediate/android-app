@@ -34,4 +34,8 @@
     <string name="neutral_ok">OK</string>
     <string name="errorLoadingShopLists">Error loading shopping lists, please try again.</string>
     <string name="doubleBackExit">Please click BACK again to exit.</string>
+    <string name="search_for_items">Search for items</string>
+    <string name="all_shops">All shops</string>
+    <string name="choose_categories">Choose categories</string>
+    <string name="help">Help</string>
 </resources>

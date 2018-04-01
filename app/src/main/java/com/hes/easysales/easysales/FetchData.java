@@ -164,6 +164,7 @@ public class FetchData {
         // Stop animation of refreshing.
         //
         swipeRefreshLayoutRef.get().setRefreshing(false);
+        ((MainActivity)activityRef.get()).filterSelectedShops();
         pbLoading.setVisibility(View.GONE);
     }
 }
