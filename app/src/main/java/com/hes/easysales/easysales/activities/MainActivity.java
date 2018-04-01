@@ -17,6 +17,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
@@ -35,6 +37,9 @@ import com.hes.easysales.easysales.fragments.ShopListsPreviewFragment;
 import com.hes.easysales.easysales.utilities.InternetUtil;
 
 import java.util.ArrayList;
+
+import static com.hes.easysales.easysales.Config.DIXY_SHOP_ID;
+import static com.hes.easysales.easysales.Config.PEREKRESTOK_SHOP_ID;
 
 /**
  * Created by sinopsys on 2/18/18.
@@ -60,8 +65,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar myToolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         swipeRefreshLayout = findViewById(R.id.swipeContainer);
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
@@ -184,19 +190,29 @@ public class MainActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         //
         getMenuInflater().inflate(R.menu.app_bar_items, menu);
-
-        MenuItem item = menu.findItem(R.id.shops_spinner);
-        Spinner spinner = (Spinner) item.getActionView();
-
-        // TODO get shop names using api request.
-        // TODO RV switch items for different shops (logic).
-        //
-        String[] shops = {getString(R.string.shop1), getString(R.string.shop2), getString(R.string.shop3)};
+        Spinner spinner = findViewById(R.id.spnrShopList);
+        String[] shops = {getString(R.string.shop1), getString(R.string.shop2)};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, shops);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                switch (position + 1) {
+                    case DIXY_SHOP_ID:
+                        // TODO Filter RV to show dixy items.
+                        return;
+                    case PEREKRESTOK_SHOP_ID:
+                        // TODO Filter RV to show perekrestok items.
+                        return;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
         return true;
     }
 

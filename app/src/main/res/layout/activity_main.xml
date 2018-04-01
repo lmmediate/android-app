@@ -16,9 +16,17 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:elevation="4dp"
+            android:gravity="center_vertical|start"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            tools:targetApi="lollipop" />
+            tools:targetApi="lollipop">
+            <Spinner
+                android:gravity="start"
+                android:id="@+id/spnrShopList"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+            </Spinner>
+        </android.support.v7.widget.Toolbar>
 
         <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/swipeContainer"
@@ -39,6 +47,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:background="@color/colorPrimary"
+            app:itemIconTint="@color/nav_item_colors"
+            app:itemTextColor="@color/nav_item_colors"
             app:menu="@menu/bottom_navigation" />
     </RelativeLayout>
 
@@ -53,4 +63,4 @@
 </android.support.design.widget.CoordinatorLayout>
 
 
-<!--EOF-->
+    <!--EOF-->

@@ -6,19 +6,10 @@
     tools:context="com.hes.easysales.easysales.activities.MainActivity">
 
     <item
-        android:id="@+id/shops_spinner"
-        android:title="@string/shops"
-        app:actionViewClass="android.widget.Spinner"
-        app:showAsAction="ifRoom" />
-
-    <!-- "Mark Favorite", should appear as action button if possible -->
-    <item
         android:id="@+id/action_profile"
-        android:icon="@drawable/ic_user_profile_24dp"
         android:title="@string/user_profile"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
-    <!-- Settings, should always be in the overflow -->
     <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
