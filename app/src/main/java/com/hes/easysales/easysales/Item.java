@@ -33,6 +33,7 @@ public class Item implements Parcelable {
     // However, Parcel keeps them for future reuse.
     //
     private boolean expandable = false;
+    private boolean matched = false;
     private List<Item> matchingItems = new ArrayList<>();
 
     // Factory method to construct an Item from JSONObject.
@@ -60,7 +61,9 @@ public class Item implements Parcelable {
         List<Item> matchingItems = new ArrayList<>();
         for (int i = 0; i < jMatchingItems.length(); i++) {
             JSONObject curr = jMatchingItems.getJSONObject(i);
-            matchingItems.add(fromJSONObject(curr));
+            Item ii = fromJSONObject(curr);
+            ii.setMatched(true);
+            matchingItems.add(ii);
         }
         item.setName(jo.optString("name"));
         item.setExpandable(true);
@@ -81,6 +84,7 @@ public class Item implements Parcelable {
         condition = in.readString();
         shop = in.readParcelable(Shop.class.getClassLoader());
         expandable = in.readByte() != 0;
+        matched = in.readByte() != 0;
         in.readTypedList(matchingItems, Item.CREATOR);
     }
 
@@ -143,6 +147,7 @@ public class Item implements Parcelable {
         dest.writeString(condition);
         dest.writeParcelable(shop, flags);
         dest.writeByte((byte) (expandable ? 1 : 0));
+        dest.writeByte((byte) (matched ? 1 : 0));
         dest.writeTypedList(matchingItems);
     }
 
@@ -206,6 +211,10 @@ public class Item implements Parcelable {
         return expandable;
     }
 
+    public boolean isMatched() {
+        return matched;
+    }
+
     public List<Item> getMatchingItems() {
         return matchingItems;
     }
@@ -256,6 +265,10 @@ public class Item implements Parcelable {
 
     public void setExpandable(boolean expandable) {
         this.expandable = expandable;
+    }
+
+    public void setMatched(boolean matched) {
+        this.matched = matched;
     }
 
     public void setMatchingItems(List<Item> matchingItems) {

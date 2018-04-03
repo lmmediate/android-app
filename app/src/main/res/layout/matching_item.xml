@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:id="@+id/ivCustomItem"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/imageViewDescription"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/tvCustomName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ivCustomItem"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="5dp"
+        android:maxLength="20"
+        android:text="@string/defItemName"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <TextView
+        android:id="@+id/tvCustomPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvCustomName"
+        android:layout_centerInParent="true"
+        android:text="@string/defPrice"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/colorAccent" />
+
+</RelativeLayout>
+
+
+<!--EOF-->

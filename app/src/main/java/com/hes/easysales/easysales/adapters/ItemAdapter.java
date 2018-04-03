@@ -4,7 +4,9 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +40,7 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder {
     TextView tvName;
     TextView tvPrice;
     TextView tvCategory;
-    private Button btnAdd;
+    Button btnAdd;
 
     ItemViewHolderWithoutChild(View itemView) {
         super(itemView);
@@ -53,17 +55,32 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder {
 
 
 class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
-    TextView tvCustomName, tvChildText;
+    TextView tvCustomName;
+    RecyclerView rvMatchingItems;
     RelativeLayout btnFold;
     ExpandableLinearLayout ell;
 
     ItemViewHolderWithChild(View itemView) {
         super(itemView);
 
-        this.tvChildText = itemView.findViewById(R.id.tvChildText);
+        this.rvMatchingItems = itemView.findViewById(R.id.rvMatchingItems);
         this.tvCustomName = itemView.findViewById(R.id.tvCustomItemName);
         this.btnFold = itemView.findViewById(R.id.btnFold);
         this.ell = itemView.findViewById(R.id.expandableLayout);
+    }
+}
+
+class MatchingItemViewHolder extends RecyclerView.ViewHolder {
+    ImageView ivCustomItem;
+    TextView tvCustomItem;
+    TextView tvCustomPrice;
+
+    MatchingItemViewHolder(View itemView) {
+        super(itemView);
+
+        this.ivCustomItem = itemView.findViewById(R.id.ivCustomItem);
+        this.tvCustomItem = itemView.findViewById(R.id.tvCustomName);
+        this.tvCustomPrice = itemView.findViewById(R.id.tvCustomPrice);
     }
 }
 
@@ -92,9 +109,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return (ArrayList<Item>) itemsCopy.clone();
     }
 
+
     @Override
     public int getItemViewType(int pos) {
-        if (items.get(pos).isExpandable()) {
+        if (items.get(pos).isMatched()) {
+            return 2;
+        } else if (items.get(pos).isExpandable()) {
             return 1;
         } else {
             return 0;
@@ -114,10 +134,18 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         // With children.
         //
-        else {
+        else if (viewType == 1) {
             LayoutInflater inflater = LayoutInflater.from(this.context);
             View v = inflater.inflate(R.layout.item_container_with_child, parent, false);
             return new ItemViewHolderWithChild(v);
+        }
+
+        // Matched item.
+        //
+        else {
+            LayoutInflater inflater = LayoutInflater.from(this.context);
+            View v = inflater.inflate(R.layout.matching_item, parent, false);
+            return new MatchingItemViewHolder(v);
         }
     }
 
@@ -142,9 +170,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 //
                 final ItemViewHolderWithChild viewHolder = (ItemViewHolderWithChild) holder;
                 Item item = items.get(position);
-//                viewHolder.setIsRecyclable(false);
+                viewHolder.setIsRecyclable(false);
                 viewHolder.tvCustomName.setText(item.getName());
-                viewHolder.tvChildText.setText("asdfasdfasdf");
+                ItemAdapter rvMatchingAdapter = new ItemAdapter(items.get(position).getMatchingItems(), context);
+                viewHolder.rvMatchingItems.setAdapter(rvMatchingAdapter);
+                viewHolder.rvMatchingItems.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                 viewHolder.ell.setInRecyclerView(true);
                 viewHolder.ell.setExpanded(expandState.get(position));
                 viewHolder.ell.setListener(new ExpandableLayoutListenerAdapter() {
@@ -167,6 +197,17 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         viewHolder.ell.toggle();
                     }
                 });
+                break;
+            }
+            case 2: {
+                MatchingItemViewHolder viewHolder = (MatchingItemViewHolder) holder;
+                Item item = items.get(position);
+                viewHolder.tvCustomItem.setText(item.getName());
+                viewHolder.tvCustomPrice.setText(String.valueOf(item.getNewPrice()));
+                viewHolder.tvCustomPrice.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+                // TODO fix FileNotFoundException for lost images
+                //
+                Glide.with(context).load(item.getImageUrl()).into(viewHolder.ivCustomItem);
                 break;
             }
             default:
