@@ -1,5 +1,6 @@
 package com.hes.easysales.easysales.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.AttributeSet;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,9 +29,12 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.hes.easysales.easysales.FetchData;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
+import com.hes.easysales.easysales.Shop;
 import com.hes.easysales.easysales.ShopList;
 import com.hes.easysales.easysales.adapters.ItemAdapter;
 import com.hes.easysales.easysales.adapters.ShopListsPreviewAdapter;
@@ -58,12 +63,14 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT_ONE = "fragment_one";
     private static final String TAG_FRAGMENT_TWO = "fragment_two";
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
-    private String selectedShop = "all";
+    private Shop selectedShop = null;
     public Parcelable itemsFragmentState;
     public Parcelable shopListsPreviewFragmentState;
     public ItemAdapter adapter;
     public ShopListsPreviewAdapter shopListsPreviewAdapter;
     public FetchData fetchData;
+    public List<Shop> shops;
+    public RequestQueue queue;
     private FragmentManager fragmentManager;
     private Fragment currentFragment;
 
@@ -101,6 +108,8 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new ItemAdapter(new ArrayList<Item>(), this);
         shopListsPreviewAdapter = new ShopListsPreviewAdapter(new ArrayList<ShopList>(), this);
+        shops = new ArrayList<>();
+        queue = Volley.newRequestQueue(this);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             ((ProgressBar) findViewById(R.id.pbLoading)).setProgress(0, true);
@@ -145,7 +154,7 @@ public class MainActivity extends AppCompatActivity {
         public void onRefresh() {
             // Pull-to-update logic.
             //
-            new FetchData(MainActivity.this, swipeRefreshLayout).execute();
+            fetchData.execute();
         }
     };
 
@@ -196,28 +205,30 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //
+        // FIXME Find out how to wait untill volley response..
+        //
+        shops.add(new Shop(1, "dixy", "Дикси"));
+        shops.add(new Shop(2, "perekrestok", "Перекресток"));
         getMenuInflater().inflate(R.menu.app_bar_items, menu);
         Spinner spinner = findViewById(R.id.spnrShopList);
-        String[] shops = {getString(R.string.all_shops), getString(R.string.shop1), getString(R.string.shop2)};
+        String[] shopsToShow = new String[shops.size() + 1];
+        shopsToShow[0] = getString(R.string.all_shops);
+        for (int i = 0; i < shops.size(); ++i) {
+            shopsToShow[i + 1] = shops.get(i).getName();
+        }
         final ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, shops);
+                android.R.layout.simple_spinner_item, shopsToShow);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                switch (position) {
-                    case DIXY_SHOP_ID:
-                        MainActivity.this.adapter.filter("shopId", String.valueOf(DIXY_SHOP_ID), false);
-                        selectedShop = ShopsUtil.getShopAliasById(DIXY_SHOP_ID);
-                        return;
-                    case PEREKRESTOK_SHOP_ID:
-                        MainActivity.this.adapter.filter("shopId", String.valueOf(PEREKRESTOK_SHOP_ID), false);
-                        selectedShop = ShopsUtil.getShopAliasById(PEREKRESTOK_SHOP_ID);
-                        return;
-                    default:
-                        MainActivity.this.adapter.filter("shopId", "", false);
-                        selectedShop = "all";
+                if (position == 0) {
+                    selectedShop = null;
+                    MainActivity.this.adapter.returnToOld();
+                } else {
+                    selectedShop = shops.get(position - 1);
+                    MainActivity.this.adapter.filter("shopId", String.valueOf(selectedShop.getId()), false);
                 }
             }
 
@@ -286,16 +297,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void filterSelectedShops() {
-        switch (selectedShop) {
-            case "dixy":
-                adapter.filter("shopId", String.valueOf(DIXY_SHOP_ID), false);
-                break;
-            case "perekrestok":
-                adapter.filter("shopId", String.valueOf(PEREKRESTOK_SHOP_ID), false);
-                break;
-            default:
-                adapter.filter("shopId", "", false);
-                break;
+        if (selectedShop == null) {
+            adapter.returnToOld();
+        } else {
+            adapter.filter("shopId", String.valueOf(selectedShop.getId()), false);
         }
     }
 }

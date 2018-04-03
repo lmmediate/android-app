@@ -6,7 +6,7 @@ package com.hes.easysales.easysales;
 
 public class Config {
 
-    public static final String URL_CORE = "http://46.17.44.125:8080/";
+    public static final String URL_CORE = "http://46.17.44.125/";
     public static final String URL_LOGIN = URL_CORE + "auth/login/";
     public static final String URL_SALES_SHOP = URL_CORE + "api/shops/";
     public static final String URL_SHOPLISTS_PREVIEW = URL_CORE + "api/shoplist?mode=preview";

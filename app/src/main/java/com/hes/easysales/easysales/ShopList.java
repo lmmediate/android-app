@@ -16,12 +16,14 @@ import java.util.List;
 
 public class ShopList implements Parcelable {
 
+    private long id;
     private String name;
     private List<Item> items;
     private List<Item> customItems;
 
 
     protected ShopList(Parcel in) {
+        id = in.readLong();
         name = in.readString();
         items = in.createTypedArrayList(Item.CREATOR);
         customItems = in.createTypedArrayList(Item.CREATOR);
@@ -56,16 +58,22 @@ public class ShopList implements Parcelable {
             customItems.add(Item.customItemFromJSONObject(curr, matchingItems));
         }
         return new ShopList(
+                jo.getLong("id"),
                 jo.getString("name"),
                 items,
                 customItems
         );
     }
 
-    public ShopList(String name, List<Item> items, List<Item> customItems) {
+    public ShopList(long id, String name, List<Item> items, List<Item> customItems) {
+        this.id = id;
         this.name = name;
         this.items = items;
         this.customItems = customItems;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -92,6 +100,10 @@ public class ShopList implements Parcelable {
         this.customItems = customItems;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -99,6 +111,7 @@ public class ShopList implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeTypedList(items);
         dest.writeTypedList(customItems);

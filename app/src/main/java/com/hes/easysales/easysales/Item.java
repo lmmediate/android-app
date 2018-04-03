@@ -2,7 +2,6 @@ package com.hes.easysales.easysales;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +17,7 @@ import java.util.List;
 
 public class Item implements Parcelable {
 
+    private long id;
     private String name;
     private String category;
     private String imageUrl;
@@ -27,7 +27,7 @@ public class Item implements Parcelable {
     private String dateIn;
     private String dateOut;
     private String condition;
-    private int shopId;
+    private Shop shop;
     // These fields are initialized explicitly using setters!
     // Factory method keeps them default.
     // However, Parcel keeps them for future reuse.
@@ -39,12 +39,13 @@ public class Item implements Parcelable {
     //
     public static Item fromJSONObject(JSONObject jo) throws JSONException {
         return new Item(
+                jo.getLong("id"),
                 jo.optString("name"),
                 jo.optString("category"),
                 jo.optString("imageUrl"),
                 jo.optDouble("oldPrice"),
                 jo.optDouble("newPrice"),
-                jo.optInt("shopId"),
+                Shop.fromJSONObject(jo.getJSONObject("shop")),
                 jo.optString("discount"),
                 jo.optString("dateIn"),
                 jo.optString("dateOut"),
@@ -68,6 +69,7 @@ public class Item implements Parcelable {
     }
 
     public Item(Parcel in) {
+        id = in.readLong();
         name = in.readString();
         category = in.readString();
         imageUrl = in.readString();
@@ -77,7 +79,7 @@ public class Item implements Parcelable {
         dateIn = in.readString();
         dateOut = in.readString();
         condition = in.readString();
-        shopId = in.readInt();
+        shop = in.readParcelable(Shop.class.getClassLoader());
         expandable = in.readByte() != 0;
         in.readTypedList(matchingItems, Item.CREATOR);
     }
@@ -94,28 +96,28 @@ public class Item implements Parcelable {
         }
     };
 
-    // FIXME it is public for debugging purposes.
-    //
-    public Item() {
+    private Item() {
     }
 
-    private Item(String name,
+    private Item(long id,
+                 String name,
                  String category,
                  String imageUrl,
                  double oldPrice,
                  double newPrice,
-                 int shopId,
+                 Shop shop,
                  String discount,
                  String dateIn,
                  String dateOut,
                  String condition) {
 
+        this.id = id;
         this.name = name;
         this.category = category;
         this.imageUrl = imageUrl;
         this.oldPrice = oldPrice;
         this.newPrice = newPrice;
-        this.shopId = shopId;
+        this.shop = shop;
         this.discount = discount;
         this.dateIn = dateIn;
         this.dateOut = dateOut;
@@ -129,6 +131,7 @@ public class Item implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
         dest.writeString(name);
         dest.writeString(category);
         dest.writeString(imageUrl);
@@ -138,9 +141,8 @@ public class Item implements Parcelable {
         dest.writeString(dateIn);
         dest.writeString(dateOut);
         dest.writeString(condition);
-        dest.writeInt(shopId);
-        int exe = isExpandable() ? 1 : 0;
-        dest.writeByte((byte) exe);
+        dest.writeParcelable(shop, flags);
+        dest.writeByte((byte) (expandable ? 1 : 0));
         dest.writeTypedList(matchingItems);
     }
 
@@ -177,7 +179,23 @@ public class Item implements Parcelable {
     }
 
     public int getShopId() {
-        return shopId;
+        return shop.getId();
+    }
+
+    public Shop getShop() {
+        return shop;
+    }
+
+    public String getShopName() {
+        return shop.getName();
+    }
+
+    public String getShopAlias() {
+        return shop.getAlias();
+    }
+
+    public long getId() {
+        return id;
     }
 
     public String getCondition() {
@@ -228,8 +246,12 @@ public class Item implements Parcelable {
         this.condition = condition;
     }
 
-    public void setShopId(int shopId) {
-        this.shopId = shopId;
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
     }
 
     public void setExpandable(boolean expandable) {
@@ -244,7 +266,7 @@ public class Item implements Parcelable {
         return new Comparator<Item>() {
             @Override
             public int compare(Item o1, Item o2) {
-                return o1.shopId < o2.shopId ? -1 : 1;
+                return o1.getShopId() < o2.getShopId() ? -1 : 1;
             }
         };
     }

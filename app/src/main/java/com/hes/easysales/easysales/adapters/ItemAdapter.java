@@ -132,6 +132,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder.tvPrice.setText(String.valueOf(item.getNewPrice()));
                 viewHolder.tvPrice.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
                 viewHolder.tvCategory.setText(item.getCategory());
+                // TODO fix FileNotFoundException for lost images
+                //
                 Glide.with(context).load(item.getImageUrl()).into(viewHolder.ivItem);
                 break;
             }
@@ -239,6 +241,13 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public void removeAt(int adapterPosition) {
         items.remove(adapterPosition);
         notifyItemRemoved(adapterPosition);
+    }
+
+    public void returnToOld() {
+        items.clear();
+        items.addAll(itemsCopy);
+        Collections.sort(items, Item.getShopIdComparator());
+        notifyDataSetChanged();
     }
 
     public void filter(String key, String query, boolean multipleFilters) {

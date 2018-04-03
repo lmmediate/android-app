@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.RequestFuture;
 import com.hes.easysales.easysales.activities.MainActivity;
 import com.hes.easysales.easysales.utilities.SharedPrefsUtil;
 import com.hes.easysales.easysales.utilities.ShopsUtil;
@@ -46,9 +47,55 @@ public class FetchData {
 
     public void execute() {
         beforeDownload();
+        downloadShops();
         downloadItems();
         downloadShopLists();
 //        afterDownload();
+    }
+
+    private void downloadShops() {
+        Response.Listener<String> respListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (TextUtils.isEmpty(response)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activityRef.get());
+                    builder.setMessage(R.string.errorLoadingShops)
+                            .setNeutralButton(R.string.neutral_ok, null)
+                            .create()
+                            .show();
+                } else {
+                    ((MainActivity) activityRef.get()).shops.clear();
+                    List<Shop> shops = new ArrayList<>();
+                    try {
+                        JSONArray jsonArray = new JSONArray(response);
+                        for (int i = 0; i < jsonArray.length(); ++i) {
+                            JSONObject jo = jsonArray.getJSONObject(i);
+                            shops.add(Shop.fromJSONObject(jo));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    ((MainActivity) activityRef.get()).shops.addAll(shops);
+                }
+            }
+        };
+
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                Toast.makeText(activityRef.get(), R.string.errorLoadingShops, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        APIRequests.RequestHandler rh = APIRequests.formGETRequest(
+                Config.URL_SALES_SHOP,
+                null,
+                respListener,
+                errListener,
+                new WeakReference<>(activityRef.get())
+        );
+        rh.launch();
     }
 
     private void downloadItems() {
@@ -91,7 +138,7 @@ public class FetchData {
                 null,
                 respListener,
                 errListener,
-                new WeakReference<>(activityRef.get().getApplicationContext())
+                new WeakReference<>(activityRef.get())
         );
         rh.launch();
 
@@ -100,7 +147,7 @@ public class FetchData {
                 null,
                 respListener,
                 errListener,
-                new WeakReference<>(activityRef.get().getApplicationContext())
+                new WeakReference<>(activityRef.get())
         );
         rh1.launch();
     }
@@ -149,7 +196,7 @@ public class FetchData {
                 headers,
                 respListener,
                 errListener,
-                new WeakReference<>(activityRef.get().getApplicationContext())
+                new WeakReference<>(activityRef.get())
         );
 
         rh.launch();
@@ -164,7 +211,7 @@ public class FetchData {
         // Stop animation of refreshing.
         //
         swipeRefreshLayoutRef.get().setRefreshing(false);
-        ((MainActivity)activityRef.get()).filterSelectedShops();
+        ((MainActivity) activityRef.get()).filterSelectedShops();
         pbLoading.setVisibility(View.GONE);
     }
 }
