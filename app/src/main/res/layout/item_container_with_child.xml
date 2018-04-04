@@ -25,7 +25,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toStartOf="@id/btnFold"
+        android:ellipsize="end"
+        android:maxLength="40"
         android:padding="15dp"
+        android:singleLine="true"
         android:text="This is item with child."
         android:textColor="@color/colorPrimaryText"
         android:textSize="20sp" />

@@ -1,46 +1,47 @@
 package com.hes.easysales.easysales.adapters;
 
 import android.animation.ObjectAnimator;
+import android.app.Dialog;
 import android.content.Context;
+import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter;
 import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.github.aakira.expandablelayout.Utils;
 import com.hes.easysales.easysales.Item;
+import com.hes.easysales.easysales.ItemClickListener;
 import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.activities.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by sinopsys on 3/28/18.
  */
 
-class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder {
+class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     ImageView ivItem;
     TextView tvName;
     TextView tvPrice;
     TextView tvCategory;
     Button btnAdd;
+    private ItemClickListener itemClickListener;
 
     ItemViewHolderWithoutChild(View itemView) {
         super(itemView);
@@ -50,6 +51,23 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder {
         this.tvPrice = itemView.findViewById(R.id.tvPrice);
         this.tvName = itemView.findViewById(R.id.tvName);
         this.btnAdd = itemView.findViewById(R.id.btnAdd);
+        itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
+    }
+
+    public void setItemClickListener(ItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        itemClickListener.onClick(v, getAdapterPosition(), false);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        itemClickListener.onClick(v, getAdapterPosition(), true);
+        return true;
     }
 }
 
@@ -70,10 +88,11 @@ class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
     }
 }
 
-class MatchingItemViewHolder extends RecyclerView.ViewHolder {
+class MatchingItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
     ImageView ivCustomItem;
     TextView tvCustomItem;
     TextView tvCustomPrice;
+    private ItemClickListener itemClickListener;
 
     MatchingItemViewHolder(View itemView) {
         super(itemView);
@@ -81,6 +100,23 @@ class MatchingItemViewHolder extends RecyclerView.ViewHolder {
         this.ivCustomItem = itemView.findViewById(R.id.ivCustomItem);
         this.tvCustomItem = itemView.findViewById(R.id.tvCustomName);
         this.tvCustomPrice = itemView.findViewById(R.id.tvCustomPrice);
+        itemView.setOnClickListener(this);
+        itemView.setOnLongClickListener(this);
+    }
+
+    public void setItemClickListener(ItemClickListener itemClickListener) {
+        this.itemClickListener = itemClickListener;
+    }
+
+    @Override
+    public void onClick(View v) {
+        itemClickListener.onClick(v, getAdapterPosition(), false);
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        itemClickListener.onClick(v, getAdapterPosition(), true);
+        return true;
     }
 }
 
@@ -90,6 +126,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Item> tmpItems;
     private ArrayList<Item> itemsCopy;
     private Context context;
+    private Dialog itemFullPreview;
     private SparseBooleanArray expandState;
     private boolean type1Downloaded = false;
     private boolean type2Downloaded = false;
@@ -150,10 +187,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder holder, final int position) {
         switch (holder.getItemViewType()) {
             case 0: {
-                ItemViewHolderWithoutChild viewHolder = (ItemViewHolderWithoutChild) holder;
+                final ItemViewHolderWithoutChild viewHolder = (ItemViewHolderWithoutChild) holder;
                 Item item = items.get(position);
 //                viewHolder.setIsRecyclable(true);
                 viewHolder.tvName.setText(item.getName());
@@ -163,6 +200,16 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // TODO fix FileNotFoundException for lost images
                 //
                 Glide.with(context).load(item.getImageUrl()).into(viewHolder.ivItem);
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View v, int postition, boolean isLongClick) {
+                        if (isLongClick) {
+//                            Toast.makeText(context, "Long Click: " + ((ItemViewHolderWithoutChild) holder).tvName.getText(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            ItemAdapter.this.showFullItem(items.get(position));
+                        }
+                    }
+                });
                 break;
             }
             case 1: {
@@ -200,7 +247,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 break;
             }
             case 2: {
-                MatchingItemViewHolder viewHolder = (MatchingItemViewHolder) holder;
+                final MatchingItemViewHolder viewHolder = (MatchingItemViewHolder) holder;
                 Item item = items.get(position);
                 viewHolder.tvCustomItem.setText(item.getName());
                 viewHolder.tvCustomPrice.setText(String.valueOf(item.getNewPrice()));
@@ -208,6 +255,16 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 // TODO fix FileNotFoundException for lost images
                 //
                 Glide.with(context).load(item.getImageUrl()).into(viewHolder.ivCustomItem);
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View v, int postition, boolean isLongClick) {
+                        if (isLongClick) {
+//                            Toast.makeText(context, "Long Click: " + viewHolder.tvCustomItem.getText(), Toast.LENGTH_SHORT).show();
+                        } else {
+                            ItemAdapter.this.showFullItem(items.get(position));
+                        }
+                    }
+                });
                 break;
             }
             default:
@@ -220,6 +277,42 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         animator.setDuration(300);
         animator.setInterpolator(Utils.createInterpolator(Utils.LINEAR_INTERPOLATOR));
         return animator;
+    }
+
+    private void showFullItem(Item item) {
+        itemFullPreview = new Dialog(context);
+        itemFullPreview.setContentView(R.layout.item_full_specs);
+        ImageView image;
+        TextView name, category, oldPrice, newPrice, dateIn, dateOut, condition;
+        RelativeLayout rl;
+
+        rl = itemFullPreview.findViewById(R.id.rlFullItem);
+        image = itemFullPreview.findViewById(R.id.ivFullItem);
+        name = itemFullPreview.findViewById(R.id.tvFullName);
+        category = itemFullPreview.findViewById(R.id.tvFullCategory);
+        oldPrice = itemFullPreview.findViewById(R.id.tvFullOldPrice);
+        newPrice = itemFullPreview.findViewById(R.id.tvFullNewPrice);
+        dateIn = itemFullPreview.findViewById(R.id.tvFullDateIn);
+        dateOut = itemFullPreview.findViewById(R.id.tvFullDateOut);
+        condition = itemFullPreview.findViewById(R.id.tvFullCondition);
+
+        Glide.with(context).load(item.getImageUrl()).into(image);
+        name.setText(item.getName());
+        category.setText(item.getCategory());
+        oldPrice.setText(String.valueOf(item.getOldPrice()));
+        newPrice.setText(String.valueOf(item.getNewPrice()));
+        dateIn.setText(item.getDateIn());
+        dateOut.setText(item.getDateOut());
+        condition.setText(item.getCondition());
+
+        oldPrice.setPaintFlags(oldPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+        rl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                itemFullPreview.dismiss();
+            }
+        });
+        itemFullPreview.show();
     }
 
     @Override

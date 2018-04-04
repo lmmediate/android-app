@@ -39,4 +39,7 @@
     <string name="choose_categories">Choose categories</string>
     <string name="help">Help</string>
     <string name="errorLoadingShops">Error loading shops, please try again.</string>
+    <string name="date_in">date in</string>
+    <string name="date_out">date out</string>
+    <string name="condition">special condition</string>
 </resources>

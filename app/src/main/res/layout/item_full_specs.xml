@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rlFullItem"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:paddingBottom="30dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:padding="20dp">
+
+    <ImageView
+        android:id="@+id/ivFullItem"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:contentDescription="@string/imageViewDescription"
+        android:scaleType="fitCenter" />
+
+    <TextView
+        android:id="@+id/tvFullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ivFullItem"
+        android:layout_centerInParent="true"
+        android:layout_marginStart="5dp"
+        android:text="@string/defItemName"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@color/colorPrimaryText" />
+
+    <TextView
+        android:id="@+id/tvFullCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvFullName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Small Text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/colorSecondaryText" />
+
+    <LinearLayout
+        android:id="@+id/llPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvFullCategory"
+        android:layout_marginTop="20dp">
+
+        <!--To get crossed text-->
+        <!--title.setPaintFlags(title.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);-->
+        <TextView
+            android:id="@+id/tvFullOldPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:paddingEnd="10dp"
+            android:text="@string/defPrice"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorSecondaryText" />
+
+        <TextView
+            android:id="@+id/tvFullNewPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:paddingStart="10dp"
+            android:text="@string/defPrice"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorAccent" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/llPrice"
+        android:layout_marginTop="15dp">
+
+        <TextView
+            android:id="@+id/tvFullDateIn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:gravity="end"
+            android:paddingEnd="10dp"
+            android:text="@string/date_in"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorPrimaryText"
+            tools:ignore="RtlSymmetry" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="---"
+            android:textAlignment="center" />
+
+        <TextView
+            android:id="@+id/tvFullDateOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:paddingStart="10dp"
+            android:text="@string/date_out"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/colorPrimaryText"
+            tools:ignore="RtlSymmetry" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvFullCondition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llDates"
+        android:layout_centerInParent="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/condition"
+        android:textAlignment="center"
+        android:textColor="@color/colorSecondaryText" />
+
+</RelativeLayout>
+
+
+<!--EOF-->

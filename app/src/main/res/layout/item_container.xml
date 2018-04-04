@@ -20,6 +20,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/defItemName"
         android:id="@+id/tvName"
+        android:ellipsize="end"
+        android:maxLength="40"
+        android:singleLine="true"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@id/ivItem"
         android:layout_toStartOf="@+id/tvPrice"/>

@@ -18,7 +18,9 @@
         android:layout_below="@id/ivCustomItem"
         android:layout_centerInParent="true"
         android:layout_marginStart="5dp"
-        android:maxLength="20"
+        android:ellipsize="end"
+        android:maxLength="12"
+        android:singleLine="true"
         android:text="@string/defItemName"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
