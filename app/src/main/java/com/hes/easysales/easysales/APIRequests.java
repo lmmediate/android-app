@@ -44,16 +44,27 @@ public class APIRequests {
         return gr;
     }
 
-    public static RequestHandler formPOSTRequest(final boolean isJSONRequest, final JSONObject jsonPayload, String requestUrl, Response.Listener rl, Response.ErrorListener rel, WeakReference<Context> c) {
+    public static RequestHandler formPOSTRequest(final boolean isJSONRequest, final JSONObject jsonPayload, final Map<String, String> headers, String requestUrl, Response.Listener rl, Response.ErrorListener rel, WeakReference<Context> c) {
         StringRequest sr = new StringRequest(Request.Method.POST, requestUrl, rl, rel) {
             @Override
             public byte[] getBody() throws AuthFailureError {
                 try {
+                    if (jsonPayload == null) {
+                        return super.getBody();
+                    }
                     return jsonPayload.toString() == null ? null : jsonPayload.toString().getBytes("utf-8");
                 } catch (UnsupportedEncodingException uee) {
                     VolleyLog.wtf("Unsupported Encoding while trying to get the bytes of %s using %s", jsonPayload.toString(), "utf-8");
                     return null;
                 }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                if (headers != null) {
+                    return headers;
+                }
+                return super.getHeaders();
             }
 
             @Override
@@ -102,8 +113,8 @@ public class APIRequests {
 
         public String getURL() {
             return Config.URL_SALES_SHOP + shopId +
-                   Config.URL_ITEMS_IN_CATEGRY + category +
-                   Config.URL_ITEMS_ON_PAGE + pageNum;
+                    Config.URL_ITEMS_IN_CATEGRY + category +
+                    Config.URL_ITEMS_ON_PAGE + pageNum;
         }
 
         public String getShopId() {
@@ -128,6 +139,20 @@ public class APIRequests {
 
         public void setPageNum(String pageNum) {
             this.pageNum = pageNum;
+        }
+    }
+
+    public static class ShopListPOSTRequest {
+        private String shopListId, itemId;
+
+        public ShopListPOSTRequest(String shopListId, String itemId) {
+            this.shopListId = shopListId;
+            this.itemId = itemId;
+        }
+
+        public String getAddURL() {
+            return Config.URL_SHOPLIST + shopListId + "/" +
+                    Config.URL_SL_ADD_ITEM + itemId;
         }
     }
 }

@@ -8,60 +8,90 @@
     android:padding="10dp">
 
     <ImageView
+        android:id="@+id/ivItem"
         android:layout_width="80dp"
-        android:scaleType="fitCenter"
         android:layout_height="80dp"
         android:contentDescription="@string/imageViewDescription"
-        android:id="@+id/ivItem"/>
+        android:scaleType="fitCenter" />
 
     <TextView
+        android:id="@+id/tvName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/defItemName"
-        android:id="@+id/tvName"
+        android:layout_marginStart="5dp"
+        android:layout_toEndOf="@id/ivItem"
+        android:layout_toStartOf="@+id/tvPrice"
         android:ellipsize="end"
         android:maxLength="40"
         android:singleLine="true"
-        android:layout_marginStart="5dp"
-        android:layout_toEndOf="@id/ivItem"
-        android:layout_toStartOf="@+id/tvPrice"/>
+        android:text="@string/defItemName"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
+        android:id="@+id/tvPrice"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/defPrice"
-        android:id="@+id/tvPrice"
-        android:textColor="@color/colorAccent"
         android:layout_alignParentEnd="true"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
-        />
+        android:text="@string/defPrice"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/colorAccent" />
 
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_marginTop="10dp"
-        android:layout_below="@id/tvPrice"
-        android:layout_alignParentEnd="true"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:clickable="true"
-        android:foreground="?android:attr/selectableItemBackground"
-        android:background="@drawable/ic_add_black_24dp"
-        android:focusable="true" />
-
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Small Text"
-        android:id="@+id/tvCategory"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/tvPrice">
+
+        <Button
+            android:id="@+id/btnRemove"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_remove_black_24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground" />
+
+        <Button
+            android:id="@+id/btnAdd"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/ic_add_black_24dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?android:attr/selectableItemBackground" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/tvCategoryWrap"
         android:layout_below="@id/tvName"
         android:layout_toEndOf="@id/ivItem"
-        android:textColor="#666" />
+        android:layout_width="match_parent"
+        android:layout_marginEnd="80dp"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tvCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="Small Text"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/colorSecondaryText" />
+        <TextView
+            android:id="@+id/tvQuantity"
+            android:layout_marginStart="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="@string/quantity"
+            android:textColor="@color/colorSecondaryText" />
+    </LinearLayout>
 
 </RelativeLayout>
 

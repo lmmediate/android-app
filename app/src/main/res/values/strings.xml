@@ -42,4 +42,8 @@
     <string name="date_in">date in</string>
     <string name="date_out">date out</string>
     <string name="condition">special condition</string>
+    <string name="quantity">Quantity:</string>
+    <string name="add_to_shoplist">Add to shoplist</string>
+    <string name="select_shoplist">Pick a shoplist</string>
+    <string name="error_add_item_to_sl">Error adding item to shoplist, please try again.</string>
 </resources>

@@ -92,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 };
 
-                APIRequests.RequestHandler rh = APIRequests.formPOSTRequest(true, jsonPayload,
+                APIRequests.RequestHandler rh = APIRequests.formPOSTRequest(true, jsonPayload, null,
                         Config.URL_LOGIN, respListener, errListener, new WeakReference<>(getApplicationContext()));
                 rh.launch();
             }

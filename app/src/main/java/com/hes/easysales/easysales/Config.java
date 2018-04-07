@@ -10,10 +10,13 @@ public class Config {
     //    http://gcsales.ru/api/shops/1?category=&page=2
     public static final String URL_LOGIN = URL_CORE + "auth/login/";
     public static final String URL_SALES_SHOP = URL_CORE + "api/shops/";
+    public static final String URL_SHOPLIST = URL_CORE + "api/shoplist/";
     public static final String URL_SHOPLISTS_PREVIEW = URL_CORE + "api/shoplist?mode=preview";
     public static final String URL_SHOPLISTS = URL_CORE + "api/shoplist?mode=full";
     public static final String URL_ITEMS_ON_PAGE = "&page=";
     public static final String URL_ITEMS_IN_CATEGRY = "?category=";
+    //    http://gcsales.ru/api/shoplist/18/additem?id=188
+    public static final String URL_SL_ADD_ITEM = "additem?id=";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String TAG_VOLLEY_ERROR = "VOLLEY";

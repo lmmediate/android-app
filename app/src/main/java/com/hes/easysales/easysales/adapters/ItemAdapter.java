@@ -3,11 +3,14 @@ package com.hes.easysales.easysales.adapters;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +21,28 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.bumptech.glide.Glide;
 import com.github.aakira.expandablelayout.ExpandableLayoutListenerAdapter;
 import com.github.aakira.expandablelayout.ExpandableLinearLayout;
 import com.github.aakira.expandablelayout.Utils;
+import com.hes.easysales.easysales.APIRequests;
+import com.hes.easysales.easysales.Config;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.ItemClickListener;
 import com.hes.easysales.easysales.R;
+import com.hes.easysales.easysales.ShopList;
 import com.hes.easysales.easysales.activities.MainActivity;
+import com.hes.easysales.easysales.activities.ShopListActivity;
+import com.hes.easysales.easysales.utilities.SharedPrefsUtil;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sinopsys on 3/28/18.
@@ -41,6 +54,8 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder implements View
     TextView tvPrice;
     TextView tvCategory;
     Button btnAdd;
+    Button btnRemove;
+    TextView tvQuantity;
     private ItemClickListener itemClickListener;
 
     ItemViewHolderWithoutChild(View itemView) {
@@ -51,6 +66,8 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder implements View
         this.tvPrice = itemView.findViewById(R.id.tvPrice);
         this.tvName = itemView.findViewById(R.id.tvName);
         this.btnAdd = itemView.findViewById(R.id.btnAdd);
+        this.btnRemove = itemView.findViewById(R.id.btnRemove);
+        this.tvQuantity = itemView.findViewById(R.id.tvQuantity);
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
     }
@@ -191,7 +208,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (holder.getItemViewType()) {
             case 0: {
                 final ItemViewHolderWithoutChild viewHolder = (ItemViewHolderWithoutChild) holder;
-                Item item = items.get(position);
+                final Item item = items.get(position);
 //                viewHolder.setIsRecyclable(true);
                 viewHolder.tvName.setText(item.getName());
                 viewHolder.tvPrice.setText(String.valueOf(item.getNewPrice()));
@@ -210,11 +227,45 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     }
                 });
+
+                // Set button add and remove behaviour.
+                //
+                if (context instanceof MainActivity) {
+                    viewHolder.btnRemove.setVisibility(View.INVISIBLE);
+                    viewHolder.btnAdd.setVisibility(View.VISIBLE);
+
+                    viewHolder.btnAdd.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            final String[] shopLists = new String[((MainActivity) context).shopListsPreviewAdapter.shopLists.size()];
+                            for (int i = 0; i < shopLists.length; i++) {
+                                shopLists[i] = ((MainActivity) context).shopListsPreviewAdapter.shopLists.get(i).getName();
+                            }
+
+                            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                            builder.setTitle(R.string.select_shoplist);
+                            builder.setItems(shopLists, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int pos) {
+                                    ItemAdapter.this.addItemToShopList(item, ((MainActivity) context).shopListsPreviewAdapter.shopLists.get(pos));
+                                }
+                            });
+                            AlertDialog alert = builder.create();
+                            alert.show();
+
+
+                            // RDY  Pre condition: show all shoplists
+                            // 1. send post request
+                            // 2. view its answer
+                            // 3. if answer if OK then update GUI.
+                        }
+                    });
+                } else if (context instanceof ShopListActivity) {
+                    viewHolder.btnRemove.setVisibility(View.VISIBLE);
+                    viewHolder.btnAdd.setVisibility(View.VISIBLE);
+                }
                 break;
             }
             case 1: {
-                // TODO: Horizontal RV do not forget..
-                //
                 final ItemViewHolderWithChild viewHolder = (ItemViewHolderWithChild) holder;
                 Item item = items.get(position);
                 viewHolder.setIsRecyclable(false);
@@ -277,6 +328,36 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         animator.setDuration(300);
         animator.setInterpolator(Utils.createInterpolator(Utils.LINEAR_INTERPOLATOR));
         return animator;
+    }
+
+    private void addItemToShopList(Item item, ShopList shopList) {
+        final String url = new APIRequests.ShopListPOSTRequest(String.valueOf(shopList.getId()), String.valueOf(item.getId())).getAddURL();
+        Response.Listener respListener = new Response.Listener() {
+            @Override
+            public void onResponse(Object response) {
+                ((MainActivity) context).fetchData.beforeDownload();
+                ((MainActivity) context).fetchData.downloadShopLists();
+                ((MainActivity) context).fetchData.afterDownload();
+            }
+        };
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, R.string.error_add_item_to_sl, Toast.LENGTH_LONG).show();
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+            }
+        };
+        String userToken = SharedPrefsUtil.getStringPref(context, Config.KEY_TOKEN);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + userToken);
+        APIRequests.RequestHandler rh = APIRequests.formPOSTRequest(false,
+                null,
+                headers,
+                url,
+                respListener,
+                errListener,
+                new WeakReference<Context>(context));
+        rh.launch();
     }
 
     private void showFullItem(Item item) {
