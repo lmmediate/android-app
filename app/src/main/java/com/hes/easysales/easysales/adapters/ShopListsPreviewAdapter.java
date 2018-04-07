@@ -3,6 +3,7 @@ package com.hes.easysales.easysales.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,7 +29,7 @@ import static com.hes.easysales.easysales.Config.MAX_LEN_PREVIEW;
 class ShopListPreviewViewHolder extends RecyclerView.ViewHolder {
     TextView tvTitlePreview;
     TextView tvItemsPreview;
-    RelativeLayout btnShowShopList;
+    CardView btnShowShopList;
 
     public ShopListPreviewViewHolder(View itemView) {
         super(itemView);
@@ -41,7 +42,6 @@ class ShopListPreviewViewHolder extends RecyclerView.ViewHolder {
 public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPreviewViewHolder> {
     public List<ShopList> shopLists;
     private Context context;
-    private int maxItemCount;
 
     public ShopListsPreviewAdapter(List<ShopList> shopLists, Context context) {
         this.shopLists = shopLists;
@@ -69,6 +69,7 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
                 ++itemCount;
                 continue;
             }
+            itemsPreview.append("...\n");
             break;
         }
         if (sl.getCustomItems().size() > 0) {
@@ -82,6 +83,7 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
                 ++itemCount;
                 continue;
             }
+            itemsPreview.append("...\n");
             break;
         }
         holder.tvTitlePreview.setText(sl.getName());

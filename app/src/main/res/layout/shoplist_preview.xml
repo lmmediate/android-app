@@ -1,27 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/shopListPreviewLayout"
     android:layout_width="wrap_content"
     android:clickable="true"
-    android:layout_height="wrap_content"
+    android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    android:focusable="true">
+    android:layout_margin="10dp"
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/tvTitlePreview"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:text="@string/shoplist_title"
-        android:textSize="20sp" />
+        android:padding="10dp">
 
-    <TextView
-        android:id="@+id/tvItemsPreview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvTitlePreview"
-        android:text="@string/shoplistitems" />
+        <TextView
+            android:id="@+id/tvTitlePreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="@string/shoplist_title"
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="20sp" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/tvItemsPreview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tvTitlePreview"
+            android:textColor="@color/colorPrimaryText"
+            android:text="@string/shoplistitems" />
+
+
+    </RelativeLayout>
+</android.support.v7.widget.CardView>
+
 
 <!--EOF-->
