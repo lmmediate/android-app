@@ -1,5 +1,6 @@
 package com.hes.easysales.easysales.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -55,6 +56,7 @@ import com.hes.easysales.easysales.utilities.InternetUtil;
 import com.hes.easysales.easysales.utilities.JSONUtil;
 import com.hes.easysales.easysales.utilities.SharedPrefsUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
     private Shop selectedShop = null;
     private View btnAdd;
+    public boolean homeActive = true;
     public int currentPage = 1;
     public String selectedCategory = "";
     public int totalItemsCount;
@@ -88,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
     public List<Shop> shops;
     public RequestQueue queue;
     private FragmentManager fragmentManager;
+    public List<String> categories;
     private int currentFragmentId;
 
     @Override
@@ -105,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         btnAdd.setOnClickListener(addShopList);
 
         fetchData = new FetchData(this, swipeRefreshLayout);
+        categories = new ArrayList<>();
 
         FrameLayout content = findViewById(R.id.fragmentContainer);
 
@@ -173,8 +178,7 @@ public class MainActivity extends AppCompatActivity {
         public void onRefresh() {
             // Pull-to-update logic.
             //
-            if (fragmentManager.findFragmentByTag(TAG_FRAGMENT_TWO) == null ||
-                    currentFragmentId != fragmentManager.findFragmentByTag(TAG_FRAGMENT_TWO).getId()) {
+            if (!homeActive) {
                 fetchData.execute(false);
                 fetchData.afterDownload();
             } else {
@@ -271,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
 //                selectedShop = shops.get(position - 1);
                 if (selectedShop.getId() != shops.get(position).getId()) {
                     selectedShop = shops.get(position);
+                    selectedCategory = "";
 //                    MainActivity.this.adapter.filter("shopId", String.valueOf(selectedShop.getId()), false);
                     MainActivity.this.adapter.addAll(new ArrayList<Item>()); // Clear item list if refreshed.
                     MainActivity.this.currentPage = 0;
@@ -295,11 +300,11 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
                 //
-//                List<String> query = new ArrayList<>();
-//                query.add("Кофе, чай");
-//                query.add("Наши марки");
-//                adapter.new ComplexQuery("category", query).apply();
                 return true;
+            case R.id.action_choose_categories:
+                // Show dialog with categories.
+                //
+                MainActivity.this.getCategories(String.valueOf(selectedShop.getId()));
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -440,6 +445,76 @@ public class MainActivity extends AppCompatActivity {
                 respListener,
                 errListener,
                 new WeakReference<>((Context) this)
+        );
+
+        rh.launch();
+    }
+
+    private void getCategories(String shopId) {
+        fetchData.beforeDownload();
+        final Response.Listener<String> respListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (TextUtils.isEmpty(response)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage(R.string.error_loading_categories)
+                            .setNeutralButton(R.string.neutral_ok, null)
+                            .create()
+                            .show();
+                } else {
+                    List<String> categs = new ArrayList<>();
+                    try {
+                        JSONArray ja = new JSONArray(response);
+                        for (int i = 0; i < ja.length(); i++) {
+                            categs.add((String) ja.get(i));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    MainActivity.this.categories = categs;
+                    fetchData.afterDownload();
+
+                    final String[] categories = new String[MainActivity.this.categories.size() + 1];
+                    categories[0] = getString(R.string.all_categs);
+                    for (int i = 1; i < categories.length; i++) {
+                        categories[i] = MainActivity.this.categories.get(i - 1);
+                    }
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle(R.string.select_category);
+                    builder.setItems(categories, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int pos) {
+                            if (categories[pos].equals(getString(R.string.all_categs))) {
+                                selectedCategory = "";
+                            } else {
+                                selectedCategory = categories[pos];
+                            }
+                            MainActivity.this.adapter.addAll(new ArrayList<Item>()); // Clear item list if refreshed.
+                            MainActivity.this.currentPage = 0;
+                            fetchData.execute(true);
+                            MainActivity.this.fetchData.afterDownload();
+//                            MainActivity.this.fetchData.downloadItems(MainActivity.this.getCurrentConfiguration());
+                        }
+                    });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
+            }
+        };
+
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                Toast.makeText(MainActivity.this, R.string.error_loading_categories, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        APIRequests.RequestHandler rh = APIRequests.formGETRequest(
+                Config.URL_SALES_SHOP + shopId + "/" + Config.URL_CATEGORIES,
+                null,
+                respListener,
+                errListener,
+                new WeakReference<>((Activity) MainActivity.this)
         );
 
         rh.launch();

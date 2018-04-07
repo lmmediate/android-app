@@ -15,6 +15,7 @@ public class Config {
     public static final String URL_SHOPLISTS = URL_CORE + "api/shoplist?mode=full";
     public static final String URL_ITEMS_ON_PAGE = "&page=";
     public static final String URL_ITEMS_IN_CATEGRY = "?category=";
+    public static final String URL_CATEGORIES = "categories";
     //    http://gcsales.ru/api/shoplist/18/additem?id=188
     public static final String URL_SL_ADD_ITEM = "additem?id=";
     public static final String URL_SL_ADD_CUSTOM_ITEM = "additem?custom=";

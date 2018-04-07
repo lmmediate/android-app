@@ -62,6 +62,7 @@ public class HomeFragment extends Fragment {
         rvItemList.setAdapter(((MainActivity) getActivity()).adapter);
         rvItemList.setLayoutManager(layoutManager);
         layoutManager.onRestoreInstanceState(((MainActivity) getActivity()).itemsFragmentState);
+        ((MainActivity) getActivity()).homeActive = true;
 
         EndlessRCVScrollListener ercvl = new EndlessRCVScrollListener((LinearLayoutManager) (rvItemList).getLayoutManager(), new WeakReference<Activity>((MainActivity) getActivity())) {
             @Override
@@ -79,6 +80,7 @@ public class HomeFragment extends Fragment {
     public void onPause() {
         super.onPause();
         ((MainActivity) getActivity()).itemsFragmentState = layoutManager.onSaveInstanceState();
+        ((MainActivity) getActivity()).homeActive = false;
     }
 }
 

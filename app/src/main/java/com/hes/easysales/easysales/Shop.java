@@ -6,6 +6,9 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.hes.easysales.easysales.Config.URL_SALES_SHOP;
 
 /**
@@ -18,10 +21,13 @@ public class Shop implements Parcelable {
     private String alias;
     private String name;
 
-    public Shop(Parcel in) {
+    private List<String> categories;
+
+    protected Shop(Parcel in) {
         id = in.readInt();
         alias = in.readString();
         name = in.readString();
+        categories = in.createStringArrayList();
     }
 
     public static final Creator<Shop> CREATOR = new Creator<Shop>() {
@@ -46,20 +52,23 @@ public class Shop implements Parcelable {
         dest.writeInt(id);
         dest.writeString(alias);
         dest.writeString(name);
+        dest.writeStringList(categories);
     }
 
     public static Shop fromJSONObject(JSONObject jo) throws JSONException {
         return jo == null ? null : new Shop(
                 jo.getInt("id"),
                 jo.getString("alias"),
-                jo.getString("name")
+                jo.getString("name"),
+                null
         );
     }
 
-    public Shop(int id, String alias, String name) {
+    public Shop(int id, String alias, String name, List<String> categories) {
         this.id = id;
         this.alias = alias;
         this.name = name;
+        this.categories = categories;
     }
 
     public int getId() {
@@ -88,6 +97,14 @@ public class Shop implements Parcelable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<String> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<String> categories) {
+        this.categories = categories;
     }
 }
 
