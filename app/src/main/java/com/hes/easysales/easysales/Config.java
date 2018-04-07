@@ -17,6 +17,7 @@ public class Config {
     public static final String URL_ITEMS_IN_CATEGRY = "?category=";
     //    http://gcsales.ru/api/shoplist/18/additem?id=188
     public static final String URL_SL_ADD_ITEM = "additem?id=";
+    public static final String URL_SL_DELETE_ITEM = "deleteitem?id=";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String TAG_VOLLEY_ERROR = "VOLLEY";

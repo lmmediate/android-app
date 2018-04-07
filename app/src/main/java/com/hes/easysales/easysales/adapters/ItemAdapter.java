@@ -1,6 +1,7 @@
 package com.hes.easysales.easysales.adapters;
 
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,6 +33,7 @@ import com.hes.easysales.easysales.Config;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.ItemClickListener;
 import com.hes.easysales.easysales.R;
+import com.hes.easysales.easysales.Shop;
 import com.hes.easysales.easysales.ShopList;
 import com.hes.easysales.easysales.activities.MainActivity;
 import com.hes.easysales.easysales.activities.ShopListActivity;
@@ -251,17 +253,19 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                             });
                             AlertDialog alert = builder.create();
                             alert.show();
-
-
-                            // RDY  Pre condition: show all shoplists
-                            // 1. send post request
-                            // 2. view its answer
-                            // 3. if answer if OK then update GUI.
                         }
                     });
                 } else if (context instanceof ShopListActivity) {
                     viewHolder.btnRemove.setVisibility(View.VISIBLE);
                     viewHolder.btnAdd.setVisibility(View.VISIBLE);
+
+
+                    viewHolder.btnRemove.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ItemAdapter.this.deleteItemFromShopList(item, ((ShopListActivity) context).selectedShopList);
+                        }
+                    });
                 }
                 break;
             }
@@ -299,7 +303,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             case 2: {
                 final MatchingItemViewHolder viewHolder = (MatchingItemViewHolder) holder;
-                Item item = items.get(position);
+                final Item item = items.get(position);
                 viewHolder.tvCustomItem.setText(item.getName());
                 viewHolder.tvCustomPrice.setText(String.valueOf(item.getNewPrice()));
                 viewHolder.tvCustomPrice.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
@@ -310,7 +314,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     @Override
                     public void onClick(View v, int postition, boolean isLongClick) {
                         if (isLongClick) {
-//                            Toast.makeText(context, "Long Click: " + viewHolder.tvCustomItem.getText(), Toast.LENGTH_SHORT).show();
+                            addItemToShopList(item, ((ShopListActivity) context).selectedShopList);
                         } else {
                             ItemAdapter.this.showFullItem(items.get(position));
                         }
@@ -330,14 +334,19 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return animator;
     }
 
-    private void addItemToShopList(Item item, ShopList shopList) {
+    private void addItemToShopList(final Item item, ShopList shopList) {
         final String url = new APIRequests.ShopListPOSTRequest(String.valueOf(shopList.getId()), String.valueOf(item.getId())).getAddURL();
         Response.Listener respListener = new Response.Listener() {
             @Override
             public void onResponse(Object response) {
-                ((MainActivity) context).fetchData.beforeDownload();
-                ((MainActivity) context).fetchData.downloadShopLists();
-                ((MainActivity) context).fetchData.afterDownload();
+                if (context instanceof MainActivity) {
+                    ((MainActivity) context).fetchData.beforeDownload();
+                    ((MainActivity) context).fetchData.downloadShopLists();
+                    ((MainActivity) context).fetchData.afterDownload();
+                } else if (context instanceof ShopListActivity) {
+                    Item i = new Item(item);
+                    ((ShopListActivity) context).adapter.add(i, getInsertNormalItemIndex());
+                }
             }
         };
         Response.ErrorListener errListener = new Response.ErrorListener() {
@@ -356,7 +365,35 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 url,
                 respListener,
                 errListener,
-                new WeakReference<Context>(context));
+                new WeakReference<>(context));
+        rh.launch();
+    }
+
+    private void deleteItemFromShopList(final Item item, ShopList shopList) {
+        final String url = new APIRequests.ShopListPOSTRequest(String.valueOf(shopList.getId()), String.valueOf(item.getId())).getDeleteURL();
+        Response.Listener respListener = new Response.Listener() {
+            @Override
+            public void onResponse(Object response) {
+                int pos = ItemAdapter.this.items.indexOf(item);
+                ItemAdapter.this.removeAt(pos);
+            }
+        };
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(context, R.string.error_removing_item_from_sl, Toast.LENGTH_LONG).show();
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+            }
+        };
+        String userToken = SharedPrefsUtil.getStringPref(context, Config.KEY_TOKEN);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + userToken);
+        APIRequests.RequestHandler rh = APIRequests.formDELETERequest(
+                headers,
+                url,
+                respListener,
+                errListener,
+                new WeakReference<>(context));
         rh.launch();
     }
 
@@ -482,6 +519,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             items.addAll(itemsMatchingQuery(key, query));
         }
         notifyDataSetChanged();
+    }
+
+    private int getInsertNormalItemIndex() {
+        ShopList sl = ((ShopListActivity) context).selectedShopList;
+        return sl.getItems().size() - 1;
     }
 
     private List<Item> itemsMatchingQuery(String key, String query) {

@@ -54,6 +54,20 @@ public class Item implements Parcelable {
         );
     }
 
+    public Item(Item i) {
+        this.id = i.getId();
+        this.name = i.getName();
+        this.category = i.getCategory();
+        this.imageUrl = i.getImageUrl();
+        this.oldPrice = i.getOldPrice();
+        this.newPrice = i.getNewPrice();
+        this.shop = i.getShop();
+        this.discount = i.getDiscount();
+        this.dateIn = i.getDateIn();
+        this.dateOut = i.getDateOut();
+        this.condition = i.getCondition();
+    }
+
     // Factory method to construct a CustomItem from JSONObject and an array of matching objects.
     //
     public static Item customItemFromJSONObject(JSONObject jo, JSONArray jMatchingItems) throws JSONException {

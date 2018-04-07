@@ -46,4 +46,5 @@
     <string name="add_to_shoplist">Add to shoplist</string>
     <string name="select_shoplist">Pick a shoplist</string>
     <string name="error_add_item_to_sl">Error adding item to shoplist, please try again.</string>
+    <string name="error_removing_item_from_sl">Error removing item from shoplist, please try again.</string>
 </resources>

@@ -80,6 +80,20 @@ public class APIRequests {
         return gr;
     }
 
+    public static RequestHandler formDELETERequest(final Map<String, String> headers, String requestUrl, Response.Listener rl, Response.ErrorListener rel, WeakReference<Context> c) {
+        StringRequest sr = new StringRequest(Request.Method.DELETE, requestUrl, rl, rel) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                if (headers != null) {
+                    return headers;
+                }
+                return super.getHeaders();
+            }
+        };
+        RequestHandler gr = new RequestHandler(sr, (Activity) c.get());
+        return gr;
+    }
+
     public static class RequestHandler {
         private Request r;
         private Activity c;
@@ -153,6 +167,11 @@ public class APIRequests {
         public String getAddURL() {
             return Config.URL_SHOPLIST + shopListId + "/" +
                     Config.URL_SL_ADD_ITEM + itemId;
+        }
+
+        public String getDeleteURL() {
+            return Config.URL_SHOPLIST + shopListId + "/" +
+                    Config.URL_SL_DELETE_ITEM + itemId;
         }
     }
 }

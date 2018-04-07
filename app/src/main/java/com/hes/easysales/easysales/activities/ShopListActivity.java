@@ -22,7 +22,8 @@ public class ShopListActivity extends AppCompatActivity {
 
     RecyclerView.LayoutManager layoutManager;
     RecyclerView rvShopList;
-    ItemAdapter adapter;
+    public ItemAdapter adapter;
+    public ShopList selectedShopList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +44,7 @@ public class ShopListActivity extends AppCompatActivity {
         rvShopList.setAdapter(adapter);
 
         ShopList sl = getIntent().getExtras().getParcelable(KEY_CURRENT_SHOPLIST);
+        selectedShopList = sl;
 
         adapter.addAllTmpItems(sl.getItems());
         adapter.addAllTmpItems(sl.getCustomItems());
