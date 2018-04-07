@@ -18,6 +18,8 @@ import com.hes.easysales.easysales.activities.ShopListActivity;
 import java.util.List;
 
 import static com.hes.easysales.easysales.Config.KEY_CURRENT_SHOPLIST;
+import static com.hes.easysales.easysales.Config.MAX_ITEMS_PREVIEW;
+import static com.hes.easysales.easysales.Config.MAX_LEN_PREVIEW;
 
 /**
  * Created by sinopsys on 3/30/18.
@@ -39,6 +41,7 @@ class ShopListPreviewViewHolder extends RecyclerView.ViewHolder {
 public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPreviewViewHolder> {
     public List<ShopList> shopLists;
     private Context context;
+    private int maxItemCount;
 
     public ShopListsPreviewAdapter(List<ShopList> shopLists, Context context) {
         this.shopLists = shopLists;
@@ -55,18 +58,31 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
 
     @Override
     public void onBindViewHolder(@NonNull ShopListPreviewViewHolder holder, final int position) {
+        int itemCount = 0;
         ShopList sl = shopLists.get(position);
         StringBuilder itemsPreview = new StringBuilder();
         for (Item i : sl.getItems()) {
-            itemsPreview.append(i.getName());
-            itemsPreview.append("\n");
+            if (itemCount <= MAX_ITEMS_PREVIEW / 2) {
+                String toAppend = truncate(i.getName(), MAX_LEN_PREVIEW);
+                itemsPreview.append(toAppend);
+                itemsPreview.append("\n");
+                ++itemCount;
+                continue;
+            }
+            break;
         }
         if (sl.getCustomItems().size() > 0) {
             itemsPreview.append("\n");
         }
         for (Item i : sl.getCustomItems()) {
-            itemsPreview.append(i.getName());
-            itemsPreview.append("\n");
+            if (itemCount <= MAX_ITEMS_PREVIEW) {
+                String toAppend = truncate(i.getName(), MAX_LEN_PREVIEW);
+                itemsPreview.append(toAppend);
+                itemsPreview.append("\n");
+                ++itemCount;
+                continue;
+            }
+            break;
         }
         holder.tvTitlePreview.setText(sl.getName());
         holder.tvItemsPreview.setText(itemsPreview.toString());
@@ -92,6 +108,14 @@ public class ShopListsPreviewAdapter extends RecyclerView.Adapter<ShopListPrevie
         notifyItemRangeRemoved(0, oldSz);
         shopLists.addAll(newShopLists);
         notifyItemRangeInserted(0, shopLists.size());
+    }
+
+    private String truncate(String str, int len) {
+        if (str.length() > len) {
+            return str.substring(0, len) + "...";
+        } else {
+            return str;
+        }
     }
 }
 

@@ -29,6 +29,8 @@ public class Config {
     public static final String KEY_ITEMS = "all_items";
     public static final String KEY_SHOPLIST_ITEMS = "shoplist_items";
     public static final String KEY_CURRENT_SHOPLIST = "com.hes.easysales.easysales.ShopList.";
+    public static final int MAX_LEN_PREVIEW = 20;
+    public static final int MAX_ITEMS_PREVIEW = 6;
 }
 
 
