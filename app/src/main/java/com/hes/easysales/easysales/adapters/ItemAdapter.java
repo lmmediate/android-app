@@ -1,7 +1,6 @@
 package com.hes.easysales.easysales.adapters;
 
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -34,7 +33,6 @@ import com.hes.easysales.easysales.Config;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.ItemClickListener;
 import com.hes.easysales.easysales.R;
-import com.hes.easysales.easysales.Shop;
 import com.hes.easysales.easysales.ShopList;
 import com.hes.easysales.easysales.activities.MainActivity;
 import com.hes.easysales.easysales.activities.ShopListActivity;
@@ -95,12 +93,13 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder implements View
 }
 
 
-class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
+class ItemViewHolderWithChild extends RecyclerView.ViewHolder implements View.OnLongClickListener {
     TextView tvCustomName;
     RecyclerView rvMatchingItems;
     RelativeLayout btnFold;
     CardView cvFold;
     ExpandableLinearLayout ell;
+    private ItemClickListener itemClickListener;
 
     ItemViewHolderWithChild(View itemView) {
         super(itemView);
@@ -110,6 +109,18 @@ class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
         this.btnFold = itemView.findViewById(R.id.btnFold);
         this.cvFold = itemView.findViewById(R.id.cvCustomItem);
         this.ell = itemView.findViewById(R.id.expandableLayout);
+
+        itemView.setOnLongClickListener(this);
+    }
+
+    public void setItemClickListener(ItemClickListener icl) {
+        this.itemClickListener = icl;
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        itemClickListener.onClick(v, getAdapterPosition(), true);
+        return false;
     }
 }
 
@@ -281,7 +292,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }
             case 1: {
                 final ItemViewHolderWithChild viewHolder = (ItemViewHolderWithChild) holder;
-                Item item = items.get(position);
+                final Item item = items.get(position);
                 if (context instanceof ShopListActivity) {
                     viewHolder.setIsRecyclable(false);
                 }
@@ -291,6 +302,14 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder.rvMatchingItems.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                 viewHolder.ell.setInRecyclerView(true);
                 viewHolder.ell.setExpanded(expandState.get(position));
+                viewHolder.setItemClickListener(new ItemClickListener() {
+                    @Override
+                    public void onClick(View v, int postition, boolean isLongClick) {
+                        if (isLongClick) {
+                            showDeleteDialogAndDelete(item, ((ShopListActivity) context).selectedShopList);
+                        }
+                    }
+                });
                 if (item.getMatchingItems().size() > 0) {
                     viewHolder.tvCustomName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
                 }
@@ -347,6 +366,28 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         animator.setDuration(300);
         animator.setInterpolator(Utils.createInterpolator(Utils.LINEAR_INTERPOLATOR));
         return animator;
+    }
+
+    private void showDeleteDialogAndDelete(final Item item, final ShopList sl) {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(context);
+        alertDialog.setTitle(R.string.delete_item);
+        alertDialog.setMessage(R.string.sure_delete_item);
+
+        alertDialog.setPositiveButton(R.string.okk,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ItemAdapter.this.deleteItemFromShopList(item, sl);
+                    }
+                });
+
+        alertDialog.setNegativeButton(R.string.cancell,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialog.show();
     }
 
     private void addItemToShopList(final Item item, ShopList shopList) {

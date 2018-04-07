@@ -49,7 +49,7 @@ public class Shop implements Parcelable {
     }
 
     public static Shop fromJSONObject(JSONObject jo) throws JSONException {
-        return new Shop(
+        return jo == null ? null : new Shop(
                 jo.getInt("id"),
                 jo.getString("alias"),
                 jo.getString("name")

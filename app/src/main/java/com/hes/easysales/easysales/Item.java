@@ -46,7 +46,7 @@ public class Item implements Parcelable {
                 jo.optString("imageUrl"),
                 jo.optDouble("oldPrice"),
                 jo.optDouble("newPrice"),
-                Shop.fromJSONObject(jo.getJSONObject("shop")),
+                Shop.fromJSONObject(jo.optJSONObject("shop")),
                 jo.optString("discount"),
                 jo.optString("dateIn"),
                 jo.optString("dateOut"),
