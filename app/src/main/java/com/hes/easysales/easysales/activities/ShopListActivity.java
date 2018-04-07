@@ -1,13 +1,17 @@
 package com.hes.easysales.easysales.activities;
 
+import android.os.Build;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.hes.easysales.easysales.FetchData;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
 import com.hes.easysales.easysales.ShopList;
@@ -22,8 +26,10 @@ public class ShopListActivity extends AppCompatActivity {
 
     RecyclerView.LayoutManager layoutManager;
     RecyclerView rvShopList;
+    SwipeRefreshLayout swipeRefreshLayout;
     public ItemAdapter adapter;
     public ShopList selectedShopList;
+    public FetchData fetchData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,13 @@ public class ShopListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         rvShopList = findViewById(R.id.rvShopList);
+        swipeRefreshLayout = findViewById(R.id.swipeSlContainer);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            ((ProgressBar) findViewById(R.id.pbSlLoading)).setProgress(0, true);
+        } else {
+            ((ProgressBar) findViewById(R.id.pbSlLoading)).setProgress(0);
+        }
+        fetchData = new FetchData(this, swipeRefreshLayout);
 
         layoutManager = new LinearLayoutManager(this);
         rvShopList.setLayoutManager(layoutManager);
@@ -45,13 +58,24 @@ public class ShopListActivity extends AppCompatActivity {
 
         ShopList sl = getIntent().getExtras().getParcelable(KEY_CURRENT_SHOPLIST);
         selectedShopList = sl;
+        fetchData.downloadCurrentShopList(selectedShopList.getId());
+        swipeRefreshLayout.setOnRefreshListener(refreshListener);
 
-        adapter.addAllTmpItems(sl.getItems());
-        adapter.addAllTmpItems(sl.getCustomItems());
-        adapter.subsItemsWithTemp();
+//        adapter.addAllTmpItems(sl.getItems());
+//        adapter.addAllTmpItems(sl.getCustomItems());
+//        adapter.subsItemsWithTemp();
     }
 
-    @Override
+    SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        @Override
+        public void onRefresh() {
+            ShopListActivity.this.adapter.addAll(new ArrayList<Item>());
+            layoutManager = new LinearLayoutManager(ShopListActivity.this);
+            rvShopList.setLayoutManager(layoutManager);
+            fetchData.downloadCurrentShopList(selectedShopList.getId());
+        }
+    };
+
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_settings:

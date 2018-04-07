@@ -49,4 +49,5 @@
     <string name="error_removing_item_from_sl">Error removing item from shoplist, please try again.</string>
     <string name="def_shop">Shop</string>
     <string name="an_item_from_shop">An item from shop</string>
+    <string name="error_loading_this_list">Error loading this shoplist. Please, try again.</string>
 </resources>

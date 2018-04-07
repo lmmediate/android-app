@@ -105,10 +105,10 @@ public class MainActivity extends AppCompatActivity {
         bottomNav.setOnNavigationItemSelectedListener(navListener);
         bottomNav.setOnNavigationItemReselectedListener(reselectNavListener);
         bottomNav.setSelectedItemId(R.id.nav_home);
-//        getSupportFragmentManager()
-//                .beginTransaction()
-//                .replace(R.id.fragmentContainer, new HomeFragment())
-//                .commit();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragmentContainer, new HomeFragment())
+                .commit();
 
         adapter = new ItemAdapter(new ArrayList<Item>(), this);
         shopListsPreviewAdapter = new ShopListsPreviewAdapter(new ArrayList<ShopList>(), this);
@@ -166,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 adapter.addAll(new ArrayList<Item>()); // Clear item list if refreshed.
                 currentPage = 0;
                 fetchData.execute(true);
+                fetchData.afterDownload();
             }
         }
     };

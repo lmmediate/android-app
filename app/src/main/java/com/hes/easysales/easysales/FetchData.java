@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.hes.easysales.easysales.activities.MainActivity;
+import com.hes.easysales.easysales.activities.ShopListActivity;
 import com.hes.easysales.easysales.utilities.SharedPrefsUtil;
 
 import org.json.JSONArray;
@@ -40,7 +41,11 @@ public class FetchData {
     public FetchData(Activity a, SwipeRefreshLayout sl) {
         activityRef = new WeakReference<>(a);
         swipeRefreshLayoutRef = new WeakReference<>(sl);
-        pbLoading = a.findViewById(R.id.pbLoading);
+        if (a instanceof MainActivity) {
+            pbLoading = a.findViewById(R.id.pbLoading);
+        } else if (a instanceof ShopListActivity) {
+            pbLoading = a.findViewById(R.id.pbSlLoading);
+        }
     }
 
     public void execute(boolean downloadItems) {
@@ -203,10 +208,67 @@ public class FetchData {
         rh.launch();
     }
 
+    public void downloadCurrentShopList(final long id) {
+        beforeDownload();
+        Response.Listener<String> respListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (TextUtils.isEmpty(response)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activityRef.get());
+                    builder.setMessage(R.string.error_loading_this_list)
+                            .setNeutralButton(R.string.neutral_ok, null)
+                            .create()
+                            .show();
+                } else {
+                    ShopList shopList = null;
+                    try {
+                        shopList = ShopList.fromJSONObject(new JSONObject(response));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    ((ShopListActivity) activityRef.get()).selectedShopList = shopList;
+                    ((ShopListActivity) activityRef.get()).adapter.clearTmpItems();
+                    ((ShopListActivity) activityRef.get()).adapter.addAllTmpItems(shopList.getItems());
+                    ((ShopListActivity) activityRef.get()).adapter.addAllTmpItems(shopList.getCustomItems());
+                    ((ShopListActivity) activityRef.get()).adapter.subsItemsWithTemp();
+                    ((ShopListActivity) activityRef.get()).adapter.notifyDataSetChanged();
+                    FetchData.this.afterDownload();
+                }
+            }
+        };
+
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                Toast.makeText(activityRef.get(), R.string.error_loading_this_list, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        String userToken = SharedPrefsUtil.getStringPref(activityRef.get(), Config.KEY_TOKEN);
+
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + userToken);
+
+        APIRequests.RequestHandler rh = APIRequests.formGETRequest(
+                Config.URL_SHOPLIST + id,
+                headers,
+                respListener,
+                errListener,
+                new WeakReference<>(activityRef.get())
+        );
+
+        rh.launch();
+    }
+
     public void beforeDownload() {
         if (!pbLoading.isShown()) {
             pbLoading.setVisibility(View.VISIBLE);
-            ((MainActivity) activityRef.get()).adapter.clearTmpItems();
+            if (activityRef.get() instanceof MainActivity) {
+                ((MainActivity) activityRef.get()).adapter.clearTmpItems();
+            } else if (activityRef.get() instanceof ShopListActivity) {
+
+            }
         }
     }
 
@@ -217,7 +279,12 @@ public class FetchData {
             swipeRefreshLayoutRef.get().setRefreshing(false);
             pbLoading.setVisibility(View.GONE);
         }
-        ((MainActivity) activityRef.get()).filterSelectedShops();
+        if (activityRef.get() instanceof MainActivity) {
+            ((MainActivity) activityRef.get()).filterSelectedShops();
+        } else if (activityRef.get() instanceof ShopListActivity) {
+            swipeRefreshLayoutRef.get().setRefreshing(false);
+            pbLoading.setVisibility(View.GONE);
+        }
     }
 }
 

@@ -48,6 +48,13 @@ public class ShopListsPreviewFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).fetchData.downloadShopLists();
+        layoutManager.onRestoreInstanceState(((MainActivity) getActivity()).shopListsPreviewFragmentState);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         ((MainActivity) getActivity()).shopListsPreviewFragmentState = layoutManager.onSaveInstanceState();
