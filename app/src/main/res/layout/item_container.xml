@@ -32,17 +32,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:text="@string/defPrice"
-        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/colorAccent" />
+
+    <TextView
+        android:id="@+id/tvShop"
+        android:layout_below="@id/tvPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
+        android:text="@string/def_shop"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/colorSecondaryText" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/tvPrice">
+        android:layout_below="@id/tvShop">
 
         <Button
             android:id="@+id/btnRemove"
@@ -50,7 +62,6 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_marginEnd="5dp"
-            android:layout_marginTop="10dp"
             android:background="@drawable/ic_remove_black_24dp"
             android:clickable="true"
             android:focusable="true"
@@ -61,7 +72,6 @@
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:layout_marginTop="10dp"
             android:background="@drawable/ic_add_black_24dp"
             android:clickable="true"
             android:focusable="true"
@@ -73,7 +83,7 @@
         android:layout_below="@id/tvName"
         android:layout_toEndOf="@id/ivItem"
         android:layout_width="match_parent"
-        android:layout_marginEnd="80dp"
+        android:layout_marginEnd="100dp"
         android:orientation="vertical"
         android:layout_height="wrap_content">
         <TextView

@@ -58,6 +58,7 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder implements View
     Button btnAdd;
     Button btnRemove;
     TextView tvQuantity;
+    TextView tvShop;
     private ItemClickListener itemClickListener;
 
     ItemViewHolderWithoutChild(View itemView) {
@@ -70,6 +71,8 @@ class ItemViewHolderWithoutChild extends RecyclerView.ViewHolder implements View
         this.btnAdd = itemView.findViewById(R.id.btnAdd);
         this.btnRemove = itemView.findViewById(R.id.btnRemove);
         this.tvQuantity = itemView.findViewById(R.id.tvQuantity);
+        this.tvShop = itemView.findViewById(R.id.tvShop);
+
         itemView.setOnClickListener(this);
         itemView.setOnLongClickListener(this);
     }
@@ -216,6 +219,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder.tvPrice.setText(String.valueOf(item.getNewPrice()));
                 viewHolder.tvPrice.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
                 viewHolder.tvCategory.setText(item.getCategory());
+                viewHolder.tvShop.setText(item.getShopName());
                 // TODO fix FileNotFoundException for lost images
                 //
                 Glide.with(context).load(item.getImageUrl()).into(viewHolder.ivItem);
@@ -401,7 +405,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         itemFullPreview = new Dialog(context);
         itemFullPreview.setContentView(R.layout.item_full_specs);
         ImageView image;
-        TextView name, category, oldPrice, newPrice, dateIn, dateOut, condition;
+        TextView name, category, oldPrice, newPrice, dateIn, dateOut, condition, shop;
         RelativeLayout rl;
 
         rl = itemFullPreview.findViewById(R.id.rlFullItem);
@@ -413,6 +417,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         dateIn = itemFullPreview.findViewById(R.id.tvFullDateIn);
         dateOut = itemFullPreview.findViewById(R.id.tvFullDateOut);
         condition = itemFullPreview.findViewById(R.id.tvFullCondition);
+        shop = itemFullPreview.findViewById(R.id.tvFullShop);
 
         Glide.with(context).load(item.getImageUrl()).into(image);
         name.setText(item.getName());
@@ -422,6 +427,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         dateIn.setText(item.getDateIn());
         dateOut.setText(item.getDateOut());
         condition.setText(item.getCondition());
+        shop.setText(shop.getText() + " " + item.getShopName());
 
         oldPrice.setPaintFlags(oldPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         rl.setOnClickListener(new View.OnClickListener() {
