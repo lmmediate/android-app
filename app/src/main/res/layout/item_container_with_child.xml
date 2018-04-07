@@ -1,58 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:id="@+id/cvCustomItem"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="5dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginStart="10dp"
+    android:layout_marginTop="5dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <RelativeLayout
-        android:id="@+id/btnFold"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:gravity="center">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-        <View
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/btnFold"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:gravity="center">
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@drawable/ic_arrow_up_black_24dp" />
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/tvCustomItemName"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/ic_arrow_up_black_24dp" />
+            android:layout_alignParentTop="true"
+            android:layout_toStartOf="@id/btnFold"
+            android:ellipsize="end"
+            android:maxLength="40"
+            android:padding="15dp"
+            android:singleLine="true"
+            android:text="This is item with child."
+            android:textColor="@color/colorPrimaryText"
+            android:textSize="20sp" />
+
+        <com.github.aakira.expandablelayout.ExpandableLinearLayout
+            android:id="@+id/expandableLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/btnFold"
+            app:ael_duration="300"
+            app:ael_expanded="true"
+            app:ael_interpolator="linear">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvMatchingItems"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="30dp"
+                android:orientation="horizontal"
+                app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
+
+        </com.github.aakira.expandablelayout.ExpandableLinearLayout>
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tvCustomItemName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toStartOf="@id/btnFold"
-        android:ellipsize="end"
-        android:maxLength="40"
-        android:padding="15dp"
-        android:singleLine="true"
-        android:text="This is item with child."
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="20sp" />
-
-    <com.github.aakira.expandablelayout.ExpandableLinearLayout
-        android:id="@+id/expandableLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/btnFold"
-        app:ael_duration="300"
-        app:ael_expanded="true"
-        app:ael_interpolator="linear">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvMatchingItems"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="30dp"
-            android:orientation="horizontal"
-            app:layoutManager="android.support.v7.widget.LinearLayoutManager" />
-
-    </com.github.aakira.expandablelayout.ExpandableLinearLayout>
-
-</RelativeLayout>
+</android.support.v7.widget.CardView>
 
 
 <!--EOF-->

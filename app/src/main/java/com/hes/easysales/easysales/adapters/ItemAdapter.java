@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -98,6 +99,7 @@ class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
     TextView tvCustomName;
     RecyclerView rvMatchingItems;
     RelativeLayout btnFold;
+    CardView cvFold;
     ExpandableLinearLayout ell;
 
     ItemViewHolderWithChild(View itemView) {
@@ -106,6 +108,7 @@ class ItemViewHolderWithChild extends RecyclerView.ViewHolder {
         this.rvMatchingItems = itemView.findViewById(R.id.rvMatchingItems);
         this.tvCustomName = itemView.findViewById(R.id.tvCustomItemName);
         this.btnFold = itemView.findViewById(R.id.btnFold);
+        this.cvFold = itemView.findViewById(R.id.cvCustomItem);
         this.ell = itemView.findViewById(R.id.expandableLayout);
     }
 }
@@ -160,7 +163,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         this.itemsCopy = new ArrayList<>();
         this.context = c;
         for (int i = 0; i < items.size(); ++i) {
-            expandState.append(i, false);
+            expandState.put(i, false);
         }
     }
 
@@ -214,7 +217,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case 0: {
                 final ItemViewHolderWithoutChild viewHolder = (ItemViewHolderWithoutChild) holder;
                 final Item item = items.get(position);
-//                viewHolder.setIsRecyclable(true);
+//                viewHolder.setIsRecyclable(false);
+                if (context instanceof ShopListActivity) {
+                    viewHolder.setIsRecyclable(false);
+                }
                 viewHolder.tvName.setText(item.getName());
                 viewHolder.tvPrice.setText(String.valueOf(item.getNewPrice()));
                 viewHolder.tvPrice.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
@@ -276,13 +282,18 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             case 1: {
                 final ItemViewHolderWithChild viewHolder = (ItemViewHolderWithChild) holder;
                 Item item = items.get(position);
-                viewHolder.setIsRecyclable(false);
+                if (context instanceof ShopListActivity) {
+                    viewHolder.setIsRecyclable(false);
+                }
                 viewHolder.tvCustomName.setText(item.getName());
                 ItemAdapter rvMatchingAdapter = new ItemAdapter(items.get(position).getMatchingItems(), context);
                 viewHolder.rvMatchingItems.setAdapter(rvMatchingAdapter);
                 viewHolder.rvMatchingItems.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
                 viewHolder.ell.setInRecyclerView(true);
                 viewHolder.ell.setExpanded(expandState.get(position));
+                if (item.getMatchingItems().size() > 0) {
+                    viewHolder.tvCustomName.setTextColor(ContextCompat.getColor(context, R.color.colorAccent));
+                }
                 viewHolder.ell.setListener(new ExpandableLayoutListenerAdapter() {
                     @Override
                     public void onPreOpen() {
@@ -297,7 +308,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     }
                 });
                 viewHolder.btnFold.setRotation(expandState.get(position) ? 180f : 0f);
-                viewHolder.btnFold.setOnClickListener(new View.OnClickListener() {
+                viewHolder.cvFold.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         viewHolder.ell.toggle();
@@ -349,7 +360,12 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     ((MainActivity) context).fetchData.afterDownload();
                 } else if (context instanceof ShopListActivity) {
                     Item i = new Item(item);
-                    ((ShopListActivity) context).adapter.add(i, getInsertNormalItemIndex());
+                    try {
+                        ((ShopListActivity) context).adapter.add(i, getInsertNormalItemIndex());
+                    } catch (IndexOutOfBoundsException exe) {
+                        ((ShopListActivity) context).adapter.add(i, 0);
+                    }
+                    ((ShopListActivity) context).selectedShopList.getItems().add(i);
                 }
             }
         };
@@ -380,6 +396,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             public void onResponse(Object response) {
                 int pos = ItemAdapter.this.items.indexOf(item);
                 ItemAdapter.this.removeAt(pos);
+//                ((ShopListActivity) context).selectedShopList.getItems().remove(pos);
+                notifyDataSetChanged();
             }
         };
         Response.ErrorListener errListener = new Response.ErrorListener() {
@@ -529,7 +547,7 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private int getInsertNormalItemIndex() {
         ShopList sl = ((ShopListActivity) context).selectedShopList;
-        return sl.getItems().size() - 1;
+        return sl.getItems().size();
     }
 
     private List<Item> itemsMatchingQuery(String key, String query) {
