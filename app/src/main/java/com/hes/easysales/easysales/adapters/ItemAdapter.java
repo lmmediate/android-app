@@ -345,6 +345,11 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         itemsCopy.addAll(newItems);
     }
 
+    public void appendAll(List<Item> newItems) {
+        items.addAll(newItems);
+        notifyDataSetChanged();
+    }
+
     public void clearTmpItems() {
         tmpItems.clear();
         type1Downloaded = type2Downloaded = false;
@@ -390,9 +395,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             items.addAll(itemsCopy);
             Collections.sort(items, Item.getShopIdComparator());
         } else {
-            if (!multipleFilters) {
-                items.clear();
-            }
+//            if (!multipleFilters) {
+//                items.clear();
+//            }
             items.addAll(itemsMatchingQuery(key, query));
         }
         notifyDataSetChanged();

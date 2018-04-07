@@ -11,10 +11,8 @@ import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.RequestFuture;
 import com.hes.easysales.easysales.activities.MainActivity;
 import com.hes.easysales.easysales.utilities.SharedPrefsUtil;
-import com.hes.easysales.easysales.utilities.ShopsUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,15 +43,15 @@ public class FetchData {
         pbLoading = a.findViewById(R.id.pbLoading);
     }
 
-    public void execute() {
+    public void execute(boolean downloadItems) {
         beforeDownload();
-        downloadShops();
-        downloadItems();
+        downloadShops(downloadItems);
+//        downloadItems();
         downloadShopLists();
 //        afterDownload();
     }
 
-    private void downloadShops() {
+    public void downloadShops(final boolean itemsDownload) {
         Response.Listener<String> respListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -64,7 +62,6 @@ public class FetchData {
                             .create()
                             .show();
                 } else {
-                    ((MainActivity) activityRef.get()).shops.clear();
                     List<Shop> shops = new ArrayList<>();
                     try {
                         JSONArray jsonArray = new JSONArray(response);
@@ -75,7 +72,14 @@ public class FetchData {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    ((MainActivity) activityRef.get()).shops.addAll(shops);
+                    if (((MainActivity) activityRef.get()).shops.size() == 0) {
+                        ((MainActivity) activityRef.get()).shops.clear();
+                        ((MainActivity) activityRef.get()).shops.addAll(shops);
+                        ((MainActivity) activityRef.get()).bindShopsAdapter();
+                    }
+                    if (itemsDownload) {
+                        FetchData.this.downloadItems(((MainActivity) activityRef.get()).getCurrentConfiguration());
+                    }
                 }
             }
         };
@@ -98,7 +102,9 @@ public class FetchData {
         rh.launch();
     }
 
-    private void downloadItems() {
+    public void downloadItems(String itemsURL) {
+        Log.d("asadfasdffdsa", "onResponse: " + ((MainActivity) activityRef.get()).getCurrentConfiguration());
+        beforeDownload();
         Response.Listener<String> respListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -111,7 +117,8 @@ public class FetchData {
                 } else {
                     List<Item> items = new ArrayList<>();
                     try {
-                        JSONArray jsonArray = new JSONArray(response);
+                        ((MainActivity) activityRef.get()).totalItemsCount = new JSONObject(response).getInt("count");
+                        JSONArray jsonArray = new JSONObject(response).getJSONArray("rows");
                         for (int i = 0; i < jsonArray.length(); ++i) {
                             JSONObject jo = jsonArray.getJSONObject(i);
                             items.add(Item.fromJSONObject(jo));
@@ -119,8 +126,9 @@ public class FetchData {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    ((MainActivity) activityRef.get()).adapter.addAllTmpItems(items);
-                    ((MainActivity) activityRef.get()).adapter.subsItemsWithTemp();
+                    ((MainActivity) activityRef.get()).adapter.appendAll(items);
+                    FetchData.this.afterDownload();
+//                    ((MainActivity) activityRef.get()).adapter.subsItemsWithTemp();
                 }
             }
         };
@@ -133,26 +141,18 @@ public class FetchData {
             }
         };
 
+
         APIRequests.RequestHandler rh = APIRequests.formGETRequest(
-                ShopsUtil.getShopUrlWithItemsById(Config.DIXY_SHOP_ID),
+                itemsURL,
                 null,
                 respListener,
                 errListener,
                 new WeakReference<>(activityRef.get())
         );
         rh.launch();
-
-        APIRequests.RequestHandler rh1 = APIRequests.formGETRequest(
-                ShopsUtil.getShopUrlWithItemsById(Config.PEREKRESTOK_SHOP_ID),
-                null,
-                respListener,
-                errListener,
-                new WeakReference<>(activityRef.get())
-        );
-        rh1.launch();
     }
 
-    private void downloadShopLists() {
+    public void downloadShopLists() {
         Response.Listener<String> respListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -174,6 +174,7 @@ public class FetchData {
                         e.printStackTrace();
                     }
                     ((MainActivity) activityRef.get()).shopListsPreviewAdapter.addAll(shopLists);
+//                    FetchData.this.afterDownload();
                 }
             }
         };
@@ -202,17 +203,21 @@ public class FetchData {
         rh.launch();
     }
 
-    private void beforeDownload() {
-        pbLoading.setVisibility(View.VISIBLE);
-        ((MainActivity) activityRef.get()).adapter.clearTmpItems();
+    public void beforeDownload() {
+        if (!pbLoading.isShown()) {
+            pbLoading.setVisibility(View.VISIBLE);
+            ((MainActivity) activityRef.get()).adapter.clearTmpItems();
+        }
     }
 
     public void afterDownload() {
         // Stop animation of refreshing.
         //
-        swipeRefreshLayoutRef.get().setRefreshing(false);
+        if (pbLoading.isShown()) {
+            swipeRefreshLayoutRef.get().setRefreshing(false);
+            pbLoading.setVisibility(View.GONE);
+        }
         ((MainActivity) activityRef.get()).filterSelectedShops();
-        pbLoading.setVisibility(View.GONE);
     }
 }
 

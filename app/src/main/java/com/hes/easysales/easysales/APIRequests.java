@@ -90,6 +90,46 @@ public class APIRequests {
             rq.add(r);
         }
     }
+
+    public static class ItemsGETRequest {
+        private String shopId, category, pageNum;
+
+        public ItemsGETRequest(String shopId, String category, String pageNum) {
+            this.category = category;
+            this.shopId = shopId;
+            this.pageNum = pageNum;
+        }
+
+        public String getURL() {
+            return Config.URL_SALES_SHOP + shopId +
+                   Config.URL_ITEMS_IN_CATEGRY + category +
+                   Config.URL_ITEMS_ON_PAGE + pageNum;
+        }
+
+        public String getShopId() {
+            return shopId;
+        }
+
+        public void setShopId(String shopId) {
+            this.shopId = shopId;
+        }
+
+        public String getCategory() {
+            return category;
+        }
+
+        public void setCategory(String category) {
+            this.category = category;
+        }
+
+        public String getPageNum() {
+            return pageNum;
+        }
+
+        public void setPageNum(String pageNum) {
+            this.pageNum = pageNum;
+        }
+    }
 }
 
 

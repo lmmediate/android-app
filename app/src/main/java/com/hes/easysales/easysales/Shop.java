@@ -75,7 +75,7 @@ public class Shop implements Parcelable {
     }
 
     public String getURL() {
-        return URL_SALES_SHOP + getAlias();
+        return URL_SALES_SHOP + getId();
     }
 
     public void setAlias(String alias) {
