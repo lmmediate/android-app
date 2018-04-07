@@ -50,4 +50,14 @@
     <string name="def_shop">Shop</string>
     <string name="an_item_from_shop">An item from shop</string>
     <string name="error_loading_this_list">Error loading this shoplist. Please, try again.</string>
+    <string name="new_shoplist">New shoplist</string>
+    <string name="how_to_call">How the new shoplist will be called?</string>
+    <string name="okk">OK</string>
+    <string name="cancell">CANCEL</string>
+    <string name="please_enter_name">Please enter name</string>
+    <string name="created">Shoplist created:</string>
+    <string name="error_adding_sl">Error adding new shoplist, please try again.</string>
+    <string name="delete_sl">Delete this shoplist</string>
+    <string name="confirm_deleteion">You sure you want to delete it?</string>
+    <string name="error_deleting_sl">Error deleting shoplist, please try again.</string>
 </resources>

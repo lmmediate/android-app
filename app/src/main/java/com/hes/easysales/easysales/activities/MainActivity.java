@@ -1,5 +1,7 @@
 package com.hes.easysales.easysales.activities;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,25 +15,31 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.hes.easysales.easysales.APIRequests;
+import com.hes.easysales.easysales.Config;
 import com.hes.easysales.easysales.EndlessRCVScrollListener;
 import com.hes.easysales.easysales.FetchData;
 import com.hes.easysales.easysales.Item;
@@ -44,9 +52,17 @@ import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListsPreviewFragment;
 import com.hes.easysales.easysales.utilities.InternetUtil;
+import com.hes.easysales.easysales.utilities.JSONUtil;
+import com.hes.easysales.easysales.utilities.SharedPrefsUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by sinopsys on 2/18/18.
@@ -60,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT_TWO = "fragment_two";
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
     private Shop selectedShop = null;
-    private View btnSearch;
     private View btnAdd;
     public int currentPage = 1;
     public String selectedCategory = "";
@@ -86,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
 
         swipeRefreshLayout = findViewById(R.id.swipeContainer);
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
-        btnSearch = findViewById(R.id.action_search);
         btnAdd = findViewById(R.id.action_add);
+        btnAdd.setOnClickListener(addShopList);
 
         fetchData = new FetchData(this, swipeRefreshLayout);
 
@@ -174,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            btnSearch = findViewById(R.id.action_search);
             btnAdd = findViewById(R.id.action_add);
             switch (item.getItemId()) {
                 case R.id.nav_favorites: {
@@ -194,9 +208,6 @@ public class MainActivity extends AppCompatActivity {
                     if (btnAdd != null) {
                         btnAdd.setVisibility(View.INVISIBLE);
                     }
-                    if (btnSearch != null) {
-                        btnSearch.setVisibility(View.VISIBLE);
-                    }
                     break;
                 }
                 case R.id.nav_shoplist: {
@@ -205,9 +216,6 @@ public class MainActivity extends AppCompatActivity {
                         fragment = ShopListsPreviewFragment.newInstance();
                     }
                     replaceFragment(fragment, TAG_FRAGMENT_THREE);
-                    if (btnSearch != null) {
-                        btnSearch.setVisibility(View.INVISIBLE);
-                    }
                     if (btnAdd != null) {
                         btnAdd.setVisibility(View.VISIBLE);
                     }
@@ -234,24 +242,6 @@ public class MainActivity extends AppCompatActivity {
         //
         getMenuInflater().inflate(R.menu.app_bar_items, menu);
         bindShopsAdapter();
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) searchItem.getActionView();
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                MainActivity.this.adapter.filter("name", query, false);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                if (TextUtils.isEmpty(newText)) {
-                    MainActivity.this.adapter.filter("name", newText, false);
-                }
-                return false;
-            }
-        });
         return true;
     }
 
@@ -356,6 +346,103 @@ public class MainActivity extends AppCompatActivity {
             currentPage = 1;
         }
         return new APIRequests.ItemsGETRequest(shopId, selectedCategory, String.valueOf(currentPage)).getURL();
+    }
+
+
+    private View.OnClickListener addShopList = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle(R.string.new_shoplist);
+            alertDialog.setMessage(R.string.how_to_call);
+
+            final EditText input = new EditText(MainActivity.this);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            input.setLayoutParams(lp);
+            input.setSingleLine(true);
+            alertDialog.setView(input);
+
+            alertDialog.setPositiveButton(R.string.okk,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            String shopListName = input.getText().toString();
+                            if (TextUtils.isEmpty(shopListName)) {
+                                Toast.makeText(MainActivity.this, R.string.please_enter_name, Toast.LENGTH_LONG).show();
+                            } else {
+                                MainActivity.this.postAddShopList(shopListName);
+                            }
+                        }
+                    });
+
+            alertDialog.setNegativeButton(R.string.cancell,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+            alertDialog.show();
+        }
+
+    };
+
+    private void postAddShopList(final String name) {
+        fetchData.beforeDownload();
+        Response.Listener<String> respListener = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                if (TextUtils.isEmpty(response)) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage(R.string.error_adding_sl)
+                            .setNeutralButton(R.string.neutral_ok, null)
+                            .create()
+                            .show();
+                } else {
+                    ShopList shopList;
+                    try {
+                        shopList = ShopList.fromJSONObject(new JSONObject(response));
+                        if (shopList.getName().equals(name)) {
+                            Toast.makeText(MainActivity.this, getString(R.string.created) + name, Toast.LENGTH_LONG).show();
+                            MainActivity.this.fetchData.execute(false);
+                            MainActivity.this.fetchData.afterDownload();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    MainActivity.this.fetchData.afterDownload();
+                }
+            }
+        };
+
+        Response.ErrorListener errListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                Toast.makeText(MainActivity.this, R.string.error_adding_sl, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        Map<String, String> namePayload = new HashMap<>();
+        namePayload.put("name", name);
+        final JSONObject jsonPayload = JSONUtil.formPayload(namePayload);
+
+        String userToken = SharedPrefsUtil.getStringPref(this, Config.KEY_TOKEN);
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Authorization", "Bearer " + userToken);
+
+        APIRequests.RequestHandler rh = APIRequests.formPOSTRequest(
+                true,
+                jsonPayload,
+                headers,
+                Config.URL_SHOPLIST,
+                respListener,
+                errListener,
+                new WeakReference<>((Context) this)
+        );
+
+        rh.launch();
     }
 }
 
