@@ -67,6 +67,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.view.View.GONE;
+
 /**
  * Created by sinopsys on 2/18/18.
  */
@@ -80,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG_FRAGMENT_THREE = "fragment_three";
     private Shop selectedShop = null;
     private View btnAdd;
+    private View btnLoginLogout;
     public boolean homeActive = true;
     public int currentPage = 1;
     public String selectedCategory = "";
@@ -108,6 +111,8 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
         btnAdd = findViewById(R.id.action_add);
         btnAdd.setOnClickListener(addShopList);
+        btnLoginLogout = findViewById(R.id.action_login_logout);
+        btnLoginLogout.setOnClickListener(loginLogoutListener);
 
         fetchData = new FetchData(this, swipeRefreshLayout);
         categories = new ArrayList<>();
@@ -142,12 +147,28 @@ public class MainActivity extends AppCompatActivity {
             ((ProgressBar) findViewById(R.id.pbLoading)).setProgress(0);
         }
 
+        if (!isLoggedIn()) {
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle(R.string.title_hello_there);
+            alertDialog.setMessage(R.string.hello_there);
+            alertDialog.setPositiveButton(R.string.okk,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+            alertDialog.show();
+        }
+
         if (InternetUtil.isConnectedToInternet(getApplicationContext())) {
             fetchData.execute(true);
         } else {
             Toast.makeText(this, R.string.noInternetToast, Toast.LENGTH_LONG).show();
             startActivityForResult(new Intent(Settings.ACTION_SETTINGS), 0);
         }
+    }
+
+    public boolean isLoggedIn() {
+        return !SharedPrefsUtil.getStringPref(this, Config.KEY_TOKEN).equals(Config.DEF_NO_TOKEN);
     }
 
     private BottomNavigationView.OnNavigationItemReselectedListener reselectNavListener = new BottomNavigationView.OnNavigationItemReselectedListener() {
@@ -195,6 +216,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             btnAdd = findViewById(R.id.action_add);
+            btnLoginLogout = findViewById(R.id.action_login_logout);
             switch (item.getItemId()) {
                 case R.id.nav_favorites: {
                     Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_ONE);
@@ -213,6 +235,18 @@ public class MainActivity extends AppCompatActivity {
                     if (btnAdd != null) {
                         btnAdd.setVisibility(View.INVISIBLE);
                     }
+                    if (btnLoginLogout != null) {
+                        btnLoginLogout.setVisibility(View.VISIBLE);
+                        if (isLoggedIn()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                btnLoginLogout.setBackground(getDrawable(R.drawable.ic_logout_black_24dp));
+                            }
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                btnLoginLogout.setBackground(getDrawable(R.drawable.ic_login_black_24dp));
+                            }
+                        }
+                    }
                     break;
                 }
                 case R.id.nav_shoplist: {
@@ -226,6 +260,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     break;
                 }
+            }
+
+            if (!MainActivity.this.isLoggedIn()) {
+                btnAdd.setVisibility(GONE);
             }
             return true;
         }
@@ -302,12 +340,6 @@ public class MainActivity extends AppCompatActivity {
                 // Show dialog with categories.
                 //
                 MainActivity.this.getCategories(String.valueOf(selectedShop.getId()));
-            case R.id.action_logout:
-                SharedPrefsUtil.clearPrefs(MainActivity.this, Config.KEY_TOKEN);
-                Intent i = new Intent(MainActivity.this, LoginActivity.class);
-                startActivityForResult(i, 0);
-                this.setResult(0);
-                this.finish();
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -363,6 +395,41 @@ public class MainActivity extends AppCompatActivity {
         return new APIRequests.ItemsGETRequest(shopId, selectedCategory, String.valueOf(currentPage)).getURL();
     }
 
+    private View.OnClickListener loginLogoutListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (isLoggedIn()) {
+                final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+                alertDialog.setTitle(R.string.loggin_out);
+                alertDialog.setMessage(R.string.sure_or_not);
+
+                alertDialog.setPositiveButton(R.string.okk,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                alertDialog.show();
+                                SharedPrefsUtil.clearPrefs(MainActivity.this, Config.KEY_TOKEN);
+                                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                                startActivityForResult(i, 0);
+                                MainActivity.this.setResult(0);
+                                MainActivity.this.finish();
+                            }
+                        });
+
+                alertDialog.setNegativeButton(R.string.cancell,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+                alertDialog.show();
+            } else {
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                startActivityForResult(i, 0);
+                MainActivity.this.setResult(0);
+                MainActivity.this.finish();
+            }
+        }
+    };
 
     private View.OnClickListener addShopList = new View.OnClickListener() {
         @Override

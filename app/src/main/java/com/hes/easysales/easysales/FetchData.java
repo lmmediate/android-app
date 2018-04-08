@@ -197,15 +197,16 @@ public class FetchData {
         Map<String, String> headers = new HashMap<>();
         headers.put("Authorization", "Bearer " + userToken);
 
-        APIRequests.RequestHandler rh = APIRequests.formGETRequest(
-                Config.URL_SHOPLISTS,
-                headers,
-                respListener,
-                errListener,
-                new WeakReference<>(activityRef.get())
-        );
-
-        rh.launch();
+        if (((MainActivity) activityRef.get()).isLoggedIn()) {
+            APIRequests.RequestHandler rh = APIRequests.formGETRequest(
+                    Config.URL_SHOPLISTS,
+                    headers,
+                    respListener,
+                    errListener,
+                    new WeakReference<>(activityRef.get())
+            );
+            rh.launch();
+        }
     }
 
     public void downloadCurrentShopList(final long id) {

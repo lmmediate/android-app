@@ -57,6 +57,20 @@
         android:id="@+id/tvRegister"
         android:textColor="@color/colorAccent"
         android:layout_below="@+id/btnLogin"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:textSize="18sp"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="10dp"
+        android:text="@string/hack_advice"
+        android:id="@+id/tvHack"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/colorAccent"/>
 </RelativeLayout>
 
 

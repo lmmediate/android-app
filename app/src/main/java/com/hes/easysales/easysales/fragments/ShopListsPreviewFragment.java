@@ -35,6 +35,11 @@ public class ShopListsPreviewFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_all_shoplists, container, false);
         rvShopLists = v.findViewById(R.id.rvAllShopLists);
+        if (((MainActivity) getActivity()).isLoggedIn()) {
+            v.findViewById(R.id.tvTease).setVisibility(View.GONE);
+        } else {
+            v.findViewById(R.id.tvTease).setVisibility(View.VISIBLE);
+        }
         return v;
     }
 

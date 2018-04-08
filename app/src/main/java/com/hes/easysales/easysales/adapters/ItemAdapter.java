@@ -288,6 +288,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     });
                 }
+                if (!((MainActivity) context).isLoggedIn()) {
+                    viewHolder.btnRemove.setVisibility(View.GONE);
+                    viewHolder.btnAdd.setVisibility(View.GONE);
+                }
                 break;
             }
             case 1: {

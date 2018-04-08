@@ -66,7 +66,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 .create()
                                 .show();
                     } else {
-                        Toast.makeText(getApplicationContext(), getString(R.string.user_success_register) + username, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), getString(R.string.user_success_register) + " " + username, Toast.LENGTH_LONG).show();
                         RegisterActivity.this.finish();
                     }
                 }

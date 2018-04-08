@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etUsername;
     private EditText etPassword;
-    private TextView tvRegister;
+    private TextView tvRegister, tvHack;
     private Button btnLogin;
     private Button.OnClickListener btnLoginListener;
     private SharedPreferences sharedPrefs;
@@ -50,9 +50,11 @@ public class LoginActivity extends AppCompatActivity {
         etPassword = findViewById(R.id.etPassword);
         tvRegister = findViewById(R.id.tvRegister);
         btnLogin = findViewById(R.id.btnLogin);
+        tvHack = findViewById(R.id.tvHack);
 
         btnLogin.setOnClickListener(btnLoginListener);
         tvRegister.setOnClickListener(registerListener);
+        tvHack.setOnClickListener(hackListener);
     }
 
     {
@@ -105,6 +107,14 @@ public class LoginActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
             startActivity(i);
+        }
+    };
+
+    private View.OnClickListener hackListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(LoginActivity.this, MainActivity.class);
+            startActivityForResult(i, 0);
         }
     };
 

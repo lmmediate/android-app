@@ -160,7 +160,7 @@ public class ShopListActivity extends AppCompatActivity {
                     try {
                         item = Item.fromJSONObject(new JSONObject(response));
                         if (item.getName().equals(name)) {
-                            Toast.makeText(ShopListActivity.this, getString(R.string.item_added) + name, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ShopListActivity.this, getString(R.string.item_added) + " " + name, Toast.LENGTH_LONG).show();
                             ShopListActivity.this.adapter.addAll(new ArrayList<Item>());
                             layoutManager = new LinearLayoutManager(ShopListActivity.this);
                             rvShopList.setLayoutManager(layoutManager);
