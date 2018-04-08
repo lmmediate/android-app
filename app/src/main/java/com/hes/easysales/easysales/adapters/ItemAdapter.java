@@ -288,9 +288,21 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         }
                     });
                 }
-                if (!((MainActivity) context).isLoggedIn()) {
-                    viewHolder.btnRemove.setVisibility(View.GONE);
-                    viewHolder.btnAdd.setVisibility(View.GONE);
+                if (context instanceof ShopListActivity) {
+                    double total = 0.0;
+                    for (Item i : items) {
+                        if (!i.isExpandable() && !i.isMatched()) {
+                            total += i.getNewPrice();
+                        }
+                    }
+                    ((ShopListActivity) context).tvTotalPrice.setText(String.valueOf(total));
+                    ((ShopListActivity) context).tvTotalPrice.setTextColor(context.getResources().getColor(R.color.colorAccent));
+                }
+                if (context instanceof MainActivity) {
+                    if (!((MainActivity) context).isLoggedIn()) {
+                        viewHolder.btnRemove.setVisibility(View.GONE);
+                        viewHolder.btnAdd.setVisibility(View.GONE);
+                    }
                 }
                 break;
             }

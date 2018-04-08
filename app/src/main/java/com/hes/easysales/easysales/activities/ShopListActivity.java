@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -49,7 +50,9 @@ public class ShopListActivity extends AppCompatActivity {
     public ItemAdapter adapter;
     public ShopList selectedShopList;
     public FetchData fetchData;
+    public TextView tvTotalPrice;
     private View btnAdd;
+    private TextView tvShopListName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,6 +64,8 @@ public class ShopListActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        tvTotalPrice = findViewById(R.id.tvTotalPrice);
+        tvShopListName = findViewById(R.id.tvShopListName);
         rvShopList = findViewById(R.id.rvShopList);
         swipeRefreshLayout = findViewById(R.id.swipeSlContainer);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -82,6 +87,7 @@ public class ShopListActivity extends AppCompatActivity {
         swipeRefreshLayout.setOnRefreshListener(refreshListener);
         btnAdd = findViewById(R.id.action_item_add);
         btnAdd.setOnClickListener(addCustomItem);
+        tvShopListName.setText(truncate(selectedShopList.getName(), 10));
     }
 
     SwipeRefreshLayout.OnRefreshListener refreshListener = new SwipeRefreshLayout.OnRefreshListener() {
@@ -197,6 +203,14 @@ public class ShopListActivity extends AppCompatActivity {
         );
 
         rh.launch();
+    }
+
+    private String truncate(String str, int len) {
+        if (str.length() > len) {
+            return str.substring(0, len) + "...";
+        } else {
+            return str;
+        }
     }
 }
 

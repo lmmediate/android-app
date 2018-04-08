@@ -80,4 +80,6 @@
     <string name="hello_there">Welcome to gcSales! You are currently not logged in, so you can only view shops\' items. For shopping lists functionality, please register :)</string>
     <string name="title_hello_there">Hello there!</string>
     <string name="tease">Here will your shopping lists. Just hit log in and the register!</string>
+    <string name="total">Total:</string>
+    <string name="def_price_total">999P.</string>
 </resources>
