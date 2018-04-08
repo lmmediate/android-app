@@ -16,6 +16,11 @@ public class SharedPrefsUtil {
         return sharedPrefs.getString(key, Config.DEF_NO_TOKEN);
     }
 
+    public static void clearPrefs(Context c, String key) {
+        SharedPreferences sharedPrefs = c.getSharedPreferences(Config.SH_PREFS_NAME, Context.MODE_PRIVATE);
+        sharedPrefs.edit().remove(key).apply();
+    }
+
 }
 
 

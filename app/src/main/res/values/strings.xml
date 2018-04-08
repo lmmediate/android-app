@@ -20,7 +20,7 @@
     <string name="emptyUsername">Username field is required</string>
     <string name="emptyPassword">Password field is required</string>
     <string name="invalidUser">Invalid user</string>
-    <string name="loginRetry">Retry</string>
+    <string name="loginRetry">Close</string>
     <string name="vLoginError">Unable to log in. Please check your user credentials and internet connection.</string>
     <string name="action_settings">Settings</string>
     <string name="user_profile">Your profile</string>
@@ -69,4 +69,8 @@
     <string name="select_category">Select a category</string>
     <string name="all_categs">All categories</string>
     <string name="action_logout">Logout</string>
+    <string name="registration">Registration</string>
+    <string name="already_registered">Already registered? Log in!</string>
+    <string name="user_success_register">Successfully registered user</string>
+    <string name="register_text">Register</string>
 </resources>

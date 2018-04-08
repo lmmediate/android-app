@@ -9,6 +9,7 @@ public class Config {
     public static final String URL_CORE = "http://gcsales.ru/";
     //    http://gcsales.ru/api/shops/1?category=&page=2
     public static final String URL_LOGIN = URL_CORE + "auth/login/";
+    public static final String URL_REGISTER = URL_CORE + "auth/register/";
     public static final String URL_SALES_SHOP = URL_CORE + "api/shops/";
     public static final String URL_SHOPLIST = URL_CORE + "api/shoplist/";
     public static final String URL_SHOPLISTS_PREVIEW = URL_CORE + "api/shoplist?mode=preview";

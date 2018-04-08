@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -297,19 +298,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                //
-                return true;
             case R.id.action_choose_categories:
                 // Show dialog with categories.
                 //
                 MainActivity.this.getCategories(String.valueOf(selectedShop.getId()));
+            case R.id.action_logout:
+                SharedPrefsUtil.clearPrefs(MainActivity.this, Config.KEY_TOKEN);
+                Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                startActivityForResult(i, 0);
+                this.setResult(0);
+                this.finish();
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 //
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == 0) {
+            finish();
         }
     }
 

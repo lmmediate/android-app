@@ -52,6 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.btnLogin);
 
         btnLogin.setOnClickListener(btnLoginListener);
+        tvRegister.setOnClickListener(registerListener);
     }
 
     {
@@ -93,11 +94,19 @@ public class LoginActivity extends AppCompatActivity {
                 };
 
                 APIRequests.RequestHandler rh = APIRequests.formPOSTRequest(true, jsonPayload, null,
-                        Config.URL_LOGIN, respListener, errListener, new WeakReference<>(getApplicationContext()));
+                        Config.URL_LOGIN, respListener, errListener, new WeakReference<>((Context) LoginActivity.this));
                 rh.launch();
             }
         };
     }
+
+    private View.OnClickListener registerListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(i);
+        }
+    };
 
     // If the result is false then there is an error in one of the fields,
     // and an error on that field was shown.
