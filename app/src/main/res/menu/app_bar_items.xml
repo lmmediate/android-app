@@ -11,13 +11,13 @@
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_profile"
-        android:title="@string/user_profile"
+        android:id="@+id/action_help"
+        android:title="@string/help"
         app:showAsAction="never" />
 
     <item
-        android:id="@+id/action_help"
-        android:title="@string/help"
+        android:id="@+id/action_about"
+        android:title="@string/about_action"
         app:showAsAction="never" />
 </menu>
 

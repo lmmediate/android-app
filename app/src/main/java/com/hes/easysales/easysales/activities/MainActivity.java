@@ -1,6 +1,7 @@
 package com.hes.easysales.easysales.activities;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -340,12 +341,23 @@ public class MainActivity extends AppCompatActivity {
                 // Show dialog with categories.
                 //
                 MainActivity.this.getCategories(String.valueOf(selectedShop.getId()));
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
+                break;
+            case R.id.action_help:
+                // Show dialog with help.
                 //
-                return super.onOptionsItemSelected(item);
+                Dialog help = new Dialog(this);
+                help.setContentView(R.layout.frame_help);
+                help.show();
+                break;
+            case R.id.action_about:
+                // Show dialog with about information.
+                //
+                Dialog about = new Dialog(this);
+                about.setContentView(R.layout.frame_about);
+                about.show();
+                break;
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
