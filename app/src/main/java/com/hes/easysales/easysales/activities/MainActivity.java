@@ -5,15 +5,12 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.os.PersistableBundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -43,7 +40,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.hes.easysales.easysales.APIRequests;
 import com.hes.easysales.easysales.Config;
-import com.hes.easysales.easysales.EndlessRCVScrollListener;
 import com.hes.easysales.easysales.FetchData;
 import com.hes.easysales.easysales.Item;
 import com.hes.easysales.easysales.R;
@@ -51,7 +47,6 @@ import com.hes.easysales.easysales.Shop;
 import com.hes.easysales.easysales.ShopList;
 import com.hes.easysales.easysales.adapters.ItemAdapter;
 import com.hes.easysales.easysales.adapters.ShopListsPreviewAdapter;
-import com.hes.easysales.easysales.fragments.FavoritesFragment;
 import com.hes.easysales.easysales.fragments.HomeFragment;
 import com.hes.easysales.easysales.fragments.ShopListsPreviewFragment;
 import com.hes.easysales.easysales.utilities.InternetUtil;
@@ -80,7 +75,6 @@ public class MainActivity extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefreshLayout;
     private static final String TAG_FRAGMENT_ONE = "fragment_one";
     private static final String TAG_FRAGMENT_TWO = "fragment_two";
-    private static final String TAG_FRAGMENT_THREE = "fragment_three";
     private Shop selectedShop = null;
     private View btnAdd;
     private View btnLoginLogout;
@@ -121,21 +115,21 @@ public class MainActivity extends AppCompatActivity {
         FrameLayout content = findViewById(R.id.fragmentContainer);
 
         fragmentManager = getSupportFragmentManager();
-        Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TWO);
+        Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_ONE);
         if (fragment == null) {
             fragment = HomeFragment.newInstance();
         }
-        replaceFragment(fragment, TAG_FRAGMENT_TWO);
+        replaceFragment(fragment, TAG_FRAGMENT_ONE);
         currentFragmentId = fragment.getId();
 
         BottomNavigationView bottomNav = findViewById(R.id.bottomNavigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
         bottomNav.setOnNavigationItemReselectedListener(reselectNavListener);
-        bottomNav.setSelectedItemId(R.id.nav_home);
-        getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragmentContainer, new HomeFragment())
-                .commit();
+//        bottomNav.setSelectedItemId(R.id.nav_home);
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.fragmentContainer, new HomeFragment())
+//                .commit();
 
         adapter = new ItemAdapter(new ArrayList<Item>(), this);
         shopListsPreviewAdapter = new ShopListsPreviewAdapter(new ArrayList<ShopList>(), this);
@@ -219,20 +213,12 @@ public class MainActivity extends AppCompatActivity {
             btnAdd = findViewById(R.id.action_add);
             btnLoginLogout = findViewById(R.id.action_login_logout);
             switch (item.getItemId()) {
-                case R.id.nav_favorites: {
-                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_ONE);
-                    if (fragment == null) {
-                        fragment = FavoritesFragment.newInstance();
-                    }
-                    replaceFragment(fragment, TAG_FRAGMENT_ONE);
-                    break;
-                }
                 case R.id.nav_home: {
-                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TWO);
+                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_ONE);
                     if (fragment == null) {
                         fragment = HomeFragment.newInstance();
                     }
-                    replaceFragment(fragment, TAG_FRAGMENT_TWO);
+                    replaceFragment(fragment, TAG_FRAGMENT_ONE);
                     if (btnAdd != null) {
                         btnAdd.setVisibility(View.INVISIBLE);
                     }
@@ -251,11 +237,11 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 }
                 case R.id.nav_shoplist: {
-                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_THREE);
+                    Fragment fragment = fragmentManager.findFragmentByTag(TAG_FRAGMENT_TWO);
                     if (fragment == null) {
                         fragment = ShopListsPreviewFragment.newInstance();
                     }
-                    replaceFragment(fragment, TAG_FRAGMENT_THREE);
+                    replaceFragment(fragment, TAG_FRAGMENT_TWO);
                     if (btnAdd != null) {
                         btnAdd.setVisibility(View.VISIBLE);
                     }
