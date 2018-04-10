@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EasySales</string>
+    <string name="app_name">gcSales</string>
     <string name="buttonDownload">click me!</string>
     <string name="showedText">Fetched text</string>
     <string name="imageViewDescription">Image of the item.</string>
