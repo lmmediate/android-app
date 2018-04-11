@@ -207,6 +207,27 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        btnAdd = findViewById(R.id.action_add);
+        if (isLoggedIn()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                btnLoginLogout.setBackground(getDrawable(R.drawable.ic_logout_black_24dp));
+            }
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                btnLoginLogout.setBackground(getDrawable(R.drawable.ic_login_black_24dp));
+            }
+        }
+        if (homeActive) {
+            btnAdd.setVisibility(View.INVISIBLE);
+        } else {
+            btnAdd.setVisibility(View.VISIBLE);
+        }
+    }
+
     private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {

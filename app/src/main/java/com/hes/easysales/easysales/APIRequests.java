@@ -174,6 +174,11 @@ public class APIRequests {
                     Config.URL_SL_DELETE_ITEM + itemId;
         }
 
+        public String getDeleteCustomURL() {
+            return Config.URL_SHOPLIST + shopListId + "/" +
+                    Config.URL_SL_DELETE_CUSTOM_ITEM + itemId;
+        }
+
         public String getAddItemURL() {
             return Config.URL_SHOPLIST + shopListId + "/" +
                     Config.URL_SL_ADD_CUSTOM_ITEM + itemId;

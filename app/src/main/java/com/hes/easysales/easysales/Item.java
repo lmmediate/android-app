@@ -80,6 +80,7 @@ public class Item implements Parcelable {
             matchingItems.add(ii);
         }
         item.setName(jo.optString("name"));
+        item.setId(jo.optLong("id"));
         item.setExpandable(true);
         item.setMatchingItems(matchingItems);
         return item;

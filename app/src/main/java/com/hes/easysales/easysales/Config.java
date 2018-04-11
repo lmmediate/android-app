@@ -21,6 +21,7 @@ public class Config {
     public static final String URL_SL_ADD_ITEM = "additem?id=";
     public static final String URL_SL_ADD_CUSTOM_ITEM = "additem?custom=";
     public static final String URL_SL_DELETE_ITEM = "deleteitem?id=";
+    public static final String URL_SL_DELETE_CUSTOM_ITEM = "deleteitem?customid=";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
     public static final String TAG_VOLLEY_ERROR = "VOLLEY";

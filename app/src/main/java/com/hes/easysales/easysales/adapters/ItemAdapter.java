@@ -231,6 +231,10 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                viewHolder.setIsRecyclable(false);
                 if (context instanceof ShopListActivity) {
                     viewHolder.setIsRecyclable(false);
+                    viewHolder.tvQuantity.setVisibility(View.VISIBLE);
+                }
+                if (context instanceof MainActivity) {
+                    viewHolder.tvQuantity.setVisibility(View.INVISIBLE);
                 }
                 viewHolder.tvName.setText(item.getName());
                 viewHolder.tvPrice.setText(String.valueOf(item.getNewPrice()));
@@ -392,7 +396,30 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         alertDialog.setPositiveButton(R.string.okk,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        ItemAdapter.this.deleteItemFromShopList(item, sl);
+                        final String url = new APIRequests.ShopListPOSTRequest(String.valueOf(sl.getId()), String.valueOf(item.getId())).getDeleteCustomURL();
+                        Response.Listener respListener = new Response.Listener() {
+                            @Override
+                            public void onResponse(Object response) {
+                                ItemAdapter.this.deleteItemFromShopList(item, sl);
+                            }
+                        };
+                        Response.ErrorListener errListener = new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Toast.makeText(context, R.string.error_removing_item_from_sl, Toast.LENGTH_LONG).show();
+                                Log.e(Config.TAG_VOLLEY_ERROR, error.toString());
+                            }
+                        };
+                        String userToken = SharedPrefsUtil.getStringPref(context, Config.KEY_TOKEN);
+                        Map<String, String> headers = new HashMap<>();
+                        headers.put("Authorization", "Bearer " + userToken);
+                        APIRequests.RequestHandler rh = APIRequests.formDELETERequest(
+                                headers,
+                                url,
+                                respListener,
+                                errListener,
+                                new WeakReference<>(context));
+                        rh.launch();
                     }
                 });
 
