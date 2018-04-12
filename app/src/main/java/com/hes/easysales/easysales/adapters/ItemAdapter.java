@@ -231,7 +231,8 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                viewHolder.setIsRecyclable(false);
                 if (context instanceof ShopListActivity) {
                     viewHolder.setIsRecyclable(false);
-                    viewHolder.tvQuantity.setVisibility(View.VISIBLE);
+                    // TODO TEMPORATILY
+//                    viewHolder.tvQuantity.setVisibility(View.VISIBLE);
                 }
                 if (context instanceof MainActivity) {
                     viewHolder.tvQuantity.setVisibility(View.INVISIBLE);
@@ -282,7 +283,9 @@ public class ItemAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     });
                 } else if (context instanceof ShopListActivity) {
                     viewHolder.btnRemove.setVisibility(View.VISIBLE);
-                    viewHolder.btnAdd.setVisibility(View.VISIBLE);
+                    // TODO TEMPORARILY
+//                    viewHolder.btnAdd.setVisibility(View.VISIBLE);
+                    viewHolder.btnAdd.setVisibility(View.INVISIBLE);
 
 
                     viewHolder.btnRemove.setOnClickListener(new View.OnClickListener() {
