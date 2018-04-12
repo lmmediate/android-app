@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">gcSales</string>
+    <string name="app_name" translatable="false">gcSales</string>
     <string name="buttonDownload">click me!</string>
     <string name="showedText">Fetched text</string>
     <string name="imageViewDescription">Image of the item.</string>
@@ -55,7 +55,7 @@
     <string name="okk">OK</string>
     <string name="cancell">CANCEL</string>
     <string name="please_enter_name">Please enter name</string>
-    <string name="created">Shoplist created:</string>
+    <string name="created">"Shoplist created: "</string>
     <string name="error_adding_sl">Error adding new shoplist, please try again.</string>
     <string name="delete_sl">Delete this shoplist</string>
     <string name="confirm_deleteion">You sure you want to delete it?</string>
@@ -79,7 +79,7 @@
     <string name="sure_or_not">Are you sure you want to log out?</string>
     <string name="hello_there">Welcome to gcSales! You are currently not logged in, so you can only view shops\' items. For shopping lists functionality, please register :)</string>
     <string name="title_hello_there">Hello there!</string>
-    <string name="tease">Here will your shopping lists. Just hit log in and the register!</string>
+    <string name="tease">Here will your shopping lists. Just hit log in and then register!</string>
     <string name="total">Total:</string>
     <string name="def_price_total">999P.</string>
     <string name="about_action">About</string>
@@ -87,5 +87,5 @@
     <string name="about_main_text">gcSales is an application where you view items from local grocery stores, add them to shoplists and share account with your family. In order to use shoplists, you need to register.</string>
     <string name="developers_and_contacts">Developers and contacts</string>
     <string name="about_dev_main">gcSales was developed under support of HSE (Higher School of Economics, Moscow).   Developers: Kupriyanov Kirill (github: Sinopsys) Surovtsev Maxim (github: diwww)  Contact: contact@gcsales.ru     Website: www.gcsales.ru   have a good day!</string>
-    <string name="help_main">You have the following functionality: 1. View items for each store we have in out database. 2. Choose which category to view. 3. When you register, you will be able to add items to shopping lists and create them. 4. Edit shopping lists: add and remove items from it. 5. If there is no such item in the store, just add it directly from shoplist and it will be added as a text item. As soon as it is to appear in the shop, it will become an item, containing other items. You can add them as well! Just long click on them. 6. You can view help and about sections.</string>
+    <string name="help_main">You have the following functionality: 1. View items for each store we have in our database. 2. Choose which category to view. 3. When you register, you will be able to add items to shopping lists and create them. 4. Edit shopping lists: add and remove items from it. 5. If there is no such item in the store, just add it directly from shoplist and it will be added as a text item. As soon as it is to appear in the shop, it will become an item, containing other items. You can add them as well! Just long click on them. 6. You can view help and about sections.</string>
 </resources>
